@@ -1,0 +1,13 @@
+TODO list for next major (sub)-versions
+
+3.1.12.2
+* Fix shadow variable issues
+* Fix scoping issues
+
+3.1.13 ?
+* Use updated https://tdb.samba.org/
+* Use updated https://github.com/ndevilla/iniparser
+* Use updated https://github.com/libevent/libevent
+
+?
+* Fix Y2038 warnings

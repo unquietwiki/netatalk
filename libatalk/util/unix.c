@@ -455,7 +455,7 @@ char *realpath_safe(const char *path)
     }
     /* Safe some memory */
     char *tmp;
-    if ((tmp = strdup(resolved_path)) == NULL) {
+    if ((tmp = __strdup(resolved_path)) == NULL) {
         free(resolved_path);
         return NULL;
     }

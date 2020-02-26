@@ -501,10 +501,10 @@ int main(int argc, char *argv[])
             delete_bdb = 1;
             break;
         case 'F':
-            obj.cmdlineconfigfile = strdup(optarg);
+            obj.cmdlineconfigfile = __strdup(optarg);
             break;
         case 'p':
-            volpath = strdup(optarg);
+            volpath = __strdup(optarg);
             break;
         case 'l':
             clntfd = atoi(optarg);
@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
             ctrlfd = atoi(optarg);
             break;
         case 'u':
-            username = strdup(optarg);
+            username = __strdup(optarg);
             break;
         case 'v':
         case 'V':

@@ -105,7 +105,7 @@ int configinit(AFPObj *obj)
      * Setup addresses we listen on from hostname and/or "afp listen" option
      */
     if (obj->options.listen) {
-        EC_NULL( q = p = strdup(obj->options.listen) );
+        EC_NULL( q = p = __strdup(obj->options.listen) );
         EC_NULL( p = strtok_r(p, ", ", &savep) );
         while (p) {
             if ((dsi = dsi_init(obj, obj->options.hostname, p, obj->options.port)) == NULL)
@@ -142,13 +142,13 @@ int configinit(AFPObj *obj)
             EC_FAIL;
         }
 
-        EC_NULL( q = p = strdup(obj->options.interfaces) );
+        EC_NULL( q = p = __strdup(obj->options.interfaces) );
         EC_NULL( p = strtok_r(p, ", ", &savep) );
         while (p) {
             for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
                 if (ifa->ifa_addr == NULL)
                     continue;
-                if (STRCMP(ifa->ifa_name, !=, p))
+                if (!strcmp(ifa->ifa_name, p))
                     continue;
 
                 family = ifa->ifa_addr->sa_family;
@@ -220,11 +220,11 @@ int configinit(AFPObj *obj)
     obj->fce_version = atoi(r);
 
     if ((r = atalk_iniparser_getstring(obj->iniconfig, INISEC_GLOBAL, "fce ignore names", ".DS_Store"))) {
-        obj->fce_ign_names = strdup(r);
+        obj->fce_ign_names = __strdup(r);
     }
 
     if ((r = atalk_iniparser_getstring(obj->iniconfig, INISEC_GLOBAL, "fce notify script", NULL))) {
-        obj->fce_notify_script = strdup(r);
+        obj->fce_notify_script = __strdup(r);
     }
 
 

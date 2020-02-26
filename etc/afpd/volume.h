@@ -21,11 +21,11 @@ extern void             setvoltime (AFPObj *, struct vol *);
 extern int              pollvoltime (AFPObj *);
 
 /* FP functions */
-int afp_openvol      (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_getvolparams (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_setvolparams (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_getsrvrparms (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_closevol     (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
+int afp_openvol (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
+int afp_getvolparams (AFPObj *obj, char *ibuf, size_t ibuflen _U_,char *rbuf, size_t *rbuflen);
+int afp_setvolparams (AFPObj *obj _U_, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
+int afp_getsrvrparms (AFPObj *obj, char *ibuf _U_, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
+int afp_closevol (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
 
 /* netatalk functions */
 extern void close_all_vol(const AFPObj *obj);

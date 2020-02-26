@@ -410,7 +410,7 @@ int main(int argc, char **argv)
             debug = 1;
             break;
         case 'F':
-            obj.cmdlineconfigfile = strdup(optarg);
+            obj.cmdlineconfigfile = __strdup(optarg);
             break;
         case 'v':       /* version */
         case 'V':       /* version */

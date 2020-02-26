@@ -192,7 +192,7 @@ static void linuxquota_get_api( void )
             kernel_iface = IFACE_VFSV0;
         }
         else if (errno != ENOSYS && errno != ENOTSUP) {
-            /* RedHat 7.1 (2.4.2-2) newquota check 
+            /* RedHat 7.1 (2.4.2-2) newquota check
              * Q_V2_GETSTATS in it's old place, Q_GETQUOTA in the new place
              * (they haven't moved Q_GETSTATS to its new value) */
             int err_stat = 0;
@@ -256,7 +256,7 @@ static int get_linux_quota(int what, char *path, uid_t euser_id, struct dqblk *d
 		r=get_linux_xfs_quota(what, path, euser_id, dp);
 	else
     		r=get_linux_fs_quota(what, path, euser_id, dp);
-    
+
 	return r;
 }
 
@@ -269,7 +269,7 @@ static int get_linux_xfs_quota(int what, char *path, uid_t euser_id, struct dqbl
 	int ret = -1;
 #ifdef HAVE_LINUX_XQM_H
 	struct fs_disk_quota D;
-	
+
 	memset (&D, 0, sizeof(D));
 
 	if ((ret = quotactl(QCMD(Q_XGETQUOTA,(what ? GRPQUOTA : USRQUOTA)), path, euser_id, (caddr_t)&D)))
@@ -281,7 +281,7 @@ static int get_linux_xfs_quota(int what, char *path, uid_t euser_id, struct dqbl
         dqb->dqb_ihardlimit  = (uint64_t)D.d_ino_hardlimit;
         dqb->dqb_isoftlimit  = (uint64_t)D.d_ino_softlimit;
         dqb->dqb_curinodes   = (uint64_t)D.d_icount;
-        dqb->dqb_curblocks   = (uint64_t)D.d_bcount; 
+        dqb->dqb_curblocks   = (uint64_t)D.d_bcount;
 #endif
        return ret;
 }
@@ -490,7 +490,7 @@ special(char *file, int *nfs)
     if (strcmp(mnt->mnt_type, "xfs") == 0)
 	is_xfs = 1;
 #endif
-	
+
     return( mnt->mnt_fsname );
 }
 
@@ -500,7 +500,6 @@ special(char *file, int *nfs)
 
 
 static int getfsquota(const AFPObj *obj, struct vol *vol, const int uid, struct dqblk *dq)
-
 {
 	struct dqblk dqg;
 
@@ -510,7 +509,7 @@ static int getfsquota(const AFPObj *obj, struct vol *vol, const int uid, struct 
 
     memset(dq, 0, sizeof(struct dqblk));
     memset(&dqg, 0, sizeof(dqg));
-	
+
 #ifdef __svr4__
     qc.op = Q_GETQUOTA;
     qc.uid = uid;
@@ -552,8 +551,7 @@ static int getfsquota(const AFPObj *obj, struct vol *vol, const int uid, struct 
                 }
             }
         }
-        unbecome_root();
-    }
+    unbecome_root();
 
 #else /* BSD4_4 */
     if (get_linux_quota (WANT_USER_QUOTA, vol->v_gvs, uid, dq) !=0) {
@@ -578,14 +576,14 @@ static int getfsquota(const AFPObj *obj, struct vol *vol, const int uid, struct 
     */
 
     /* if user space remaining > group space remaining */
-    if( 
+    if(
         /* if overquota, free space is 0 otherwise hard-current */
-        ( overquota( dq ) ? 0 : ( dq->dqb_bhardlimit ? dq->dqb_bhardlimit - 
+        ( overquota( dq ) ? 0 : ( dq->dqb_bhardlimit ? dq->dqb_bhardlimit -
                                   dq->dqb_curblocks : ~((uint64_t) 0) ) )
 
       >
-        
-        ( overquota( &dqg ) ? 0 : ( dqg.dqb_bhardlimit ? dqg.dqb_bhardlimit - 
+
+        ( overquota( &dqg ) ? 0 : ( dqg.dqb_bhardlimit ? dqg.dqb_bhardlimit -
                                     dqg.dqb_curblocks : ~((uint64_t) 0) ) )
 
       ) /* if */
@@ -663,7 +661,7 @@ static int getquota(const AFPObj *obj, struct vol *vol, struct dqblk *dq, const 
 	char pathstring[MNAMELEN];
 	/* MNAMELEN ist defined in <sys/mount.h> */
 	int result;
-	
+
 	if ((hostpath = strchr(vol->v_gvs,'@')) != NULL ) {
 	    /* convert 'path@hostname' to 'hostname:path',
 	     * call getnfsquota(),
@@ -671,14 +669,14 @@ static int getquota(const AFPObj *obj, struct vol *vol, struct dqblk *dq, const 
 	    *hostpath = '\0';
 	    sprintf(pathstring,"%s:%s",hostpath+1,vol->v_gvs);
 	    strcpy(vol->v_gvs,pathstring);
-	    
+
 	    result = getnfsquota(vol, uuid, bsize, dq);
-	    
+
 	    hostpath = strchr(vol->v_gvs,':');
 	    *hostpath = '\0';
 	    sprintf(pathstring,"%s@%s",hostpath+1,vol->v_gvs);
 	    strcpy(vol->v_gvs,pathstring);
-	    
+
 	    return result;
 	}
 	else
@@ -687,7 +685,7 @@ static int getquota(const AFPObj *obj, struct vol *vol, struct dqblk *dq, const 
     } else
 	/* local filesystem */
       return getfsquota(obj, vol, obj->uid, dq);
-	   
+
 #else /* TRU64 */
     return vol->v_nfs ? getnfsquota(vol, obj->uid, bsize, dq) :
       getfsquota(obj, vol, obj->uid, dq);
@@ -745,7 +743,7 @@ static int overquota( struct dqblk *dqblk)
    work */
 #ifdef HAVE_2ARG_DBTOB
 #define tobytes(a, b)  dbtob((VolSpace) (a), (VolSpace) (b))
-#else 
+#else
 #define tobytes(a, b)  dbtob((VolSpace) (a))
 #endif
 
@@ -755,7 +753,7 @@ int uquota_getvolspace(const AFPObj *obj, struct vol *vol, VolSpace *bfree, VolS
 	struct dqblk dqblk;
 
 	this_bsize = bsize;
-			
+
 	if (getquota(obj, vol, &dqblk, bsize) != 0 ) {
 		return( AFPERR_PARAM );
 	}
@@ -778,7 +776,7 @@ int uquota_getvolspace(const AFPObj *obj, struct vol *vol, VolSpace *bfree, VolS
 	LOG(log_debug, logtype_afpd, "dqblk.dqb_bhardlimit size: %u", tobytes( dqblk.dqb_bhardlimit, this_bsize ));
 	LOG(log_debug, logtype_afpd, "dqblk.dqb_bsoftlimit size: %u", tobytes( dqblk.dqb_bsoftlimit, this_bsize ));
 	LOG(log_debug, logtype_afpd, "dqblk.dqb_curblocks  size: %u", tobytes( dqblk.dqb_curblocks, this_bsize ));
-#endif /* DEBUG_QUOTA */ 
+#endif /* DEBUG_QUOTA */
 
 	/* no limit set for this user. it might be set in the future. */
 	if (dqblk.dqb_bsoftlimit == 0 && dqblk.dqb_bhardlimit == 0) {

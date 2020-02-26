@@ -5,14 +5,14 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
- 
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
  */
 
-#ifndef AFPD_ACLS_H 
+#ifndef AFPD_ACLS_H
 #define AFPD_ACLS_H
 
 #ifdef HAVE_SOLARIS_ACLS
@@ -32,7 +32,7 @@
  * round-tripping flags through user-space interfaces.
  * The high 16 bits of the flags are used to store attributes and
  * to request specific handling of the ACL. </Apple>
- * 
+ *
  * The constants are included for reference. We DONT expect them on
  * the wire! We will ignore and spoil em.
  */
@@ -108,9 +108,9 @@ typedef struct {
 } darwin_acl_header_t;
 
 /* FP functions */
-int afp_access (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_getacl (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_setacl (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
+int afp_access (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
+int afp_getacl (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
+int afp_setacl (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
 
 /* Misc funcs */
 extern int acltoownermode(const AFPObj *obj, const struct vol *vol, char *path, struct stat *st, struct maccess *ma);

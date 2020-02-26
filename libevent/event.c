@@ -2646,7 +2646,7 @@ event_mm_strdup_(const char *str)
 		return p;
 	} else
 #ifdef WIN32
-		return _strdup(str);
+		return __strdup(str);
 #else
 		return strdup(str);
 #endif

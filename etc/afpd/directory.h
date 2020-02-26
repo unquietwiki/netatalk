@@ -96,12 +96,12 @@ q_t *invalid_dircache_entries;
 typedef int (*dir_loop)(struct dirent *, char *, void *);
 
 extern void        dir_free_invalid_q(void);
-extern struct dir  *dir_new(const char *mname, const char *uname, const struct vol *,
-                            cnid_t pdid, cnid_t did, bstring fullpath, struct stat *);
+extern struct dir *dir_new(const char *m_name, const char *u_name, const struct vol *vol,
+                            cnid_t pdid, cnid_t did, bstring path, struct stat *st);
 extern void        dir_free (struct dir *);
 extern struct dir  *dir_add(struct vol *, const struct dir *, struct path *, int);
 extern int         dir_modify(const struct vol *vol, struct dir *dir, cnid_t pdid, cnid_t did,
-                              const char *new_mname, const char *new_uname, bstring pdir_fullpath);
+                            const char *new_mname, const char *new_uname, bstring pdir_fullpath);
 extern int         dir_remove(const struct vol *vol, struct dir *dir);
 extern struct dir  *dirlookup (const struct vol *, cnid_t);
 extern struct dir *dirlookup_bypath(const struct vol *vol, const char *path);
@@ -121,7 +121,7 @@ extern int         path_error(struct path *, int error);
 extern void        setdiroffcnt(struct dir *dir, struct stat *st,  uint32_t count);
 extern int         dirreenumerate(struct dir *dir, struct stat *st);
 extern int         for_each_dirent(const struct vol *, char *, dir_loop , void *);
-extern int         check_access(const AFPObj *obj, struct vol *, char *name , int mode);
+extern int         check_access(const AFPObj *obj, struct vol *vol, char *path, int mode);
 extern int         file_access(const AFPObj *obj, struct vol *vol, struct path *path, int mode);
 extern int         netatalk_unlink (const char *name);
 
@@ -129,13 +129,13 @@ extern int         netatalk_unlink (const char *name);
 extern char        *check_dirent (const struct vol *, char *);
 
 /* FP functions */
-int afp_createdir (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_opendir (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_setdirparams (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_closedir (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_mapid (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_mapname (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
-int afp_syncdir (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
+int afp_createdir (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
+int afp_opendir (AFPObj *obj _U_, char *ibuf, size_t ibuflen  _U_, char *rbuf, size_t *rbuflen);
+int afp_setdirparams (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
+int afp_closedir (AFPObj *obj _U_, char *ibuf _U_, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
+int afp_mapid (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
+int afp_mapname (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
+int afp_syncdir (AFPObj *obj _U_, char *ibuf, size_t ibuflen _U_, char *rbuf _U_, size_t *rbuflen);
 
 /* from enumerate.c */
 int afp_enumerate (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);

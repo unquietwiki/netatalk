@@ -59,7 +59,7 @@ static struct bin_file_data {
 extern char	*forkname[];
 static u_char	head_buf[HEADBUFSIZ];
 
-/* 
+/*
  * bin_open must be called first.  pass it a filename that is supposed
  * to contain a macbinary file.  an bin struct will be allocated and
  * somewhat initialized; bin_filed is set.
@@ -95,19 +95,19 @@ int bin_open(char *binfile, int flags, struct FHeader *fh, int options)
 #if DEBUG
 	fprintf( stderr, "opened %s for read\n", binfile );
 #endif /* DEBUG */
-	if ((( rc = test_header() ) > 0 ) && 
+	if ((( rc = test_header() ) > 0 ) &&
 		( bin_header_read( fh, rc ) == 0 )) {
 	    return( 0 );
 	}
 	fprintf( stderr, "%s is not a macbinary file.\n", binfile );
 	return( -1 );
     } else { /* output */
-        if (options & OPTION_STDOUT) 
+        if (options & OPTION_STDOUT)
 	  bin.filed = fileno(stdout);
 	else {
 	  maxlen = sizeof( bin.path ) - 1;
 #if DEBUG
-	  fprintf( stderr, "sizeof bin.path\t\t\t%d\n", sizeof( bin.path ));
+	  fprintf( stderr, "sizeof bin.path\t\t\t%zu\n", sizeof( bin.path ));
 	  fprintf( stderr, "maxlen \t\t\t\t%d\n", maxlen );
 #endif /* DEBUG */
 	  strncpy( bin.path, fh->name, maxlen );
@@ -118,7 +118,7 @@ int bin_open(char *binfile, int flags, struct FHeader *fh, int options)
 	    return( -1 );
 	  }
 #if DEBUG
-	  fprintf( stderr, "opened %s for write\n", 
+	  fprintf( stderr, "opened %s for write\n",
 		   (options & OPTION_STDOUT) ? "(stdout)" : bin.path );
 #endif /* DEBUG */
 	}
@@ -132,9 +132,9 @@ int bin_open(char *binfile, int flags, struct FHeader *fh, int options)
     }
 }
 
-/* 
+/*
  * bin_close must be called before a second file can be opened using
- * bin_open.  Upon successful completion, a value of 0 is returned.  
+ * bin_open.  Upon successful completion, a value of 0 is returned.
  * Otherwise, a value of -1 is returned.
  */
 
@@ -146,7 +146,7 @@ int bin_close(int keepflag)
     if ( keepflag == KEEP ) {
 	return( close( bin.filed ));
     } else if ( keepflag == TRASH ) {
-	if (( strcmp( bin.path, STDIN ) != 0 ) && 
+	if (( strcmp( bin.path, STDIN ) != 0 ) &&
 		( unlink( bin.path ) < 0 )) {
 	    perror ( bin.path );
 	}
@@ -228,7 +228,7 @@ ssize_t bin_read( int fork, char *buffer, size_t length)
 }
 
 /*
- * bin_write 
+ * bin_write
  */
 
 ssize_t bin_write(int fork, char *buffer, size_t length)
@@ -304,7 +304,7 @@ ssize_t bin_write(int fork, char *buffer, size_t length)
     return( length );
 }
 
-/* 
+/*
  * bin_header_read is called by bin_open, and before any information can
  * read from the fh substruct.  it must be called before any
  * of the bytes of the other two forks can be read, as well.
@@ -336,7 +336,7 @@ int bin_header_read(struct FHeader *fh, int revision)
     }
 
 /*
- * Go through and copy all the stuff you can get from the 
+ * Go through and copy all the stuff you can get from the
  * MacBinary header into the fh struct.  What fun!
  */
 
@@ -381,8 +381,8 @@ int bin_header_read(struct FHeader *fh, int revision)
 	fprintf( stderr, "get info comment\t%s\n", fh->comment );
 	fprintf( stderr, "type\t\t\t%.*s\n", sizeof( fh->finder_info.fdType ),
 		&fh->finder_info.fdType );
-	fprintf( stderr, "creator\t\t\t%.*s\n", 
-		sizeof( fh->finder_info.fdCreator ), 
+	fprintf( stderr, "creator\t\t\t%.*s\n",
+		sizeof( fh->finder_info.fdCreator ),
 		&fh->finder_info.fdCreator );
 	memcpy( &flags, &fh->finder_info.fdFlags, sizeof( flags ));
 	flags = ntohs( flags );
@@ -403,7 +403,7 @@ int bin_header_read(struct FHeader *fh, int revision)
     return( 0 );
 }
 
-/* 
+/*
  * bin_header_write is called by bin_open, and relies on information
  * from the fh substruct.  it must be called before any
  * of the bytes of the other two forks can be written, as well.
@@ -509,7 +509,7 @@ int bin_header_write(struct FHeader *fh)
  * at offset 124 then it is a MacBinary II.  If not, then if byte 82
  * is zero, byte 2 is a valid value for a mac filename length (between
  * one and sixty-three), and bytes 101 through 125 are all zero, then
- * the file is a MacBinary. 
+ * the file is a MacBinary.
  *
  * NOTE: apple's MacBinary II files have a non-zero value at byte 74.
  * so, the check for byte 74 isn't very useful.

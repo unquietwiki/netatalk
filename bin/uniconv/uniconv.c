@@ -81,7 +81,7 @@ static int veto(const char *path)
 {
     int i,j;
     char *veto_str = VETO;
-    
+
 
     if ((path == NULL))
         return 0;
@@ -136,7 +136,7 @@ static int do_rename( char* src, char *dst, struct stat *st)
 	else {
 		fprintf (stderr, "failed to rename resource fork, error: %s\n", strerror(errno));
                 return -1;
- 	}	
+ 	}
 
     }
     return 0;
@@ -145,23 +145,23 @@ static int do_rename( char* src, char *dst, struct stat *st)
 
 static char *convert_name(char *name, struct stat *st, cnid_t cur_did)
 {
-	static char   buffer[MAXPATHLEN +2];  /* for convert_charset dest_len parameter +2 */
+	static char buffer[MAXPATHLEN +2];  /* for convert_charset dest_len parameter +2 */
 	size_t outlen = 0;
-	unsigned char *p,*q;
+	unsigned char *bcp, *ncp;
 	int require_conversion = 0;
-    uint16_t    flags = conv_flags;
+    uint16_t flags = conv_flags;
 	cnid_t id;
 
-	p = (unsigned char *)name;
-	q = (unsigned char *)buffer;
+	bcp = (unsigned char *)buffer;
+	ncp = (unsigned char *)name;
 
 	/* optimize for ascii case */
-	while (*p != 0) {
-		if ( *p >= 0x80 || *p == ':') {
+	while (*ncp != 0) {
+		if ( *ncp >= 0x80 || *ncp == ':') {
 			require_conversion = 1;
 			break;
 		}
-		p++;
+		ncp++;
 	}
 
 	if (!require_conversion) {
@@ -171,20 +171,17 @@ static char *convert_name(char *name, struct stat *st, cnid_t cur_did)
 	}
 
 	/* convert charsets */
-	q=(unsigned char *)buffer;
-	p=(unsigned char *)name;
-
-	outlen = convert_charset(ch_from, ch_to, ch_mac, (char *)p, strlen((char *)p), (char *)q, sizeof(buffer) -2, &flags);
+	outlen = convert_charset(ch_from, ch_to, ch_mac, (char *)ncp, strlen((char *)ncp), (char *)bcp, sizeof(buffer) -2, &flags);
 	if ((size_t)-1 == outlen) {
   	   if ( ch_to == CH_UTF8) {
 		/* maybe name is already in UTF8? */
 		flags = conv_flags;
-		q = (unsigned char *)buffer;
-		p = (unsigned char *)name;
-		outlen = convert_charset(ch_to, ch_to, ch_mac, (char *)p, strlen((char *)p), (char *)q, sizeof(buffer) -2, &flags);
+		bcp = (unsigned char *)buffer;
+		ncp = (unsigned char *)name;
+		outlen = convert_charset(ch_to, ch_to, ch_mac, (char *)ncp, strlen((char *)ncp), (char *)bcp, sizeof(buffer) -2, &flags);
 		if ((size_t)-1 == outlen) {
 			/* it's not UTF8... */
-        		fprintf(stderr, "ERROR: conversion from '%s' to '%s' for '%s' in DID %u failed!!!\n", 
+        		fprintf(stderr, "ERROR: conversion from '%s' to '%s' for '%s' in DID %u failed!!!\n",
                   		from_charset, to_charset, name, ntohl(cur_did));
 			return name;
 		}
@@ -193,7 +190,7 @@ static char *convert_name(char *name, struct stat *st, cnid_t cur_did)
 	   		return name;
 		}
            }
- 	   fprintf(stderr, "ERROR: conversion from '%s' to '%s' for '%s' in DID %u failed. Please check this!\n", 
+ 	   fprintf(stderr, "ERROR: conversion from '%s' to '%s' for '%s' in DID %u failed. Please check this!\n",
                   	from_charset, to_charset, name, ntohl(cur_did));
 	   return name;
 	}
@@ -201,16 +198,16 @@ static char *convert_name(char *name, struct stat *st, cnid_t cur_did)
 	if (strcmp (name, buffer)) {
 	    if (dry_run) {
     		fprintf(stdout, "dry_run: would rename %s to %s.\n", name, buffer);
-	    }	
+	    }
 	    else if (!do_rename(name, buffer, st)) {
-		if (CNID_INVALID != (id = cnid_add(cdb, st, cur_did, buffer, strlen(buffer), 0))) 
-       	    		fprintf(stdout, "converted '%s' to '%s' (ID %u, DID %u).\n", 
+		if (CNID_INVALID != (id = cnid_add(cdb, st, cur_did, buffer, strlen(buffer), 0)))
+       	    		fprintf(stdout, "converted '%s' to '%s' (ID %u, DID %u).\n",
                                 name, buffer, ntohl(id), ntohl(cur_did));
 	    }
 	}
 	else if (verbose > 1)
 	    fprintf(stdout, "no conversion required\n");
-	
+
 	return (buffer);
 }
 
@@ -234,7 +231,7 @@ static int check_dirent(char** name, cnid_t cur_did)
 
 	if (S_ISDIR(st.st_mode)){
 		ret = 1;
-	} 
+	}
 
 	if (verbose > 1)
 	    fprintf(stdout, "Checking: '%s' - ", *name);
@@ -273,12 +270,12 @@ static int check_adouble(DIR *curdir, char * path _U_)
 			fprintf (stderr, "found orphaned resource file %s", ad_entry->d_name);
 		}
 	}
-			
+
 	rewinddir(curdir);
 	closedir(adouble);
 	return (0);
 }
-		
+
 static cnid_t add_dir_db(char *name, cnid_t cur_did)
 {
 	cnid_t id, did;
@@ -298,7 +295,7 @@ static cnid_t add_dir_db(char *name, cnid_t cur_did)
         }
 
         id = cnid_add(cdb, &st, did, name, strlen(name), 0);
-	
+
 	fprintf (stderr, "added '%s' to DID %u as %u\n", name, ntohl(did), ntohl(id));
 	return id;
 }
@@ -317,7 +314,7 @@ static int getdir(DIR *curdir, char ***names)
 			exit (-1);
 		}
 		tmp = new;
-		name = strdup(entry->d_name);
+		name = __strdup(entry->d_name);
 		if (name == NULL) {
 			fprintf(stderr, "out of memory");
 			exit (-1);
@@ -353,12 +350,12 @@ static int checkdir(DIR *curdir, char *path, cnid_t cur_did)
 
 	while (n--) {
 		name = names[n];
-		tmp = strdup(name);
+		tmp = __strdup(name);
                 ret = check_dirent(&name, cur_did);
 		if (ret==1) {
                     id = add_dir_db(name, cur_did);
-		    if ( id == 0 && !dry_run ) 
-			continue;  /* skip, no ID */ 
+		    if ( id == 0 && !dry_run )
+			continue;  /* skip, no ID */
 		    if ( dry_run )
 			name = tmp;
                     strlcat(curpath, "/", sizeof(curpath));
@@ -459,20 +456,20 @@ int main(int argc, char *argv[])
         conv_flags = CONV_UNESCAPEHEX | CONV_ESCAPEHEX | CONV_ESCAPEDOTS;
 
 #ifdef HAVE_SETLINEBUF
-        setlinebuf(stdout); 
-#endif        
+        setlinebuf(stdout);
+#endif
 
         while ((c = getopt (argc, argv, "f:m:t:c:dnvVh")) != -1)
         switch (c)
         {
 	case 'f':
-		from_charset = strdup(optarg);
+		from_charset = __strdup(optarg);
 		break;
 	case 't':
-		to_charset = strdup(optarg);
+		to_charset = __strdup(optarg);
 		break;
 	case 'm':
-		mac_charset = strdup(optarg);
+		mac_charset = __strdup(optarg);
 		break;
 	case 'd':
 		conv_flags &= ~CONV_ESCAPEDOTS;
@@ -483,7 +480,7 @@ int main(int argc, char *argv[])
 		dry_run = 1;
 		break;
 	case 'c':
-		cnid_type = strdup(optarg);
+		cnid_type = __strdup(optarg);
 		fprintf (stderr, "CNID backend set to: %s\n", cnid_type);
 		break;
 	case 'v':
@@ -517,12 +514,12 @@ int main(int argc, char *argv[])
 
 	if ( cnid_type == NULL)
 		cnid_type = DEFAULT_CNID_SCHEME;
-	
+
 
 	/* get path */
 	strlcpy(path, argv[optind], sizeof(path));
 
-	/* deal with relative path */	
+	/* deal with relative path */
 	if (chdir(path)) {
                 fprintf (stderr, "ERROR: cannot chdir to '%s'\n", path);
                 return (-1);

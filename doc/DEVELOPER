@@ -168,7 +168,7 @@ Example:
     EC_INIT; /* expands to int ret = 0; */
 
     char *uppername = NULL
-    EC_NULL(uppername = strdup(name));
+    EC_NULL(uppername = __strdup(name));
     EC_ZERO(strtoupper(uppername));
 
     EC_ZERO(stat(uppername, &some_struct_stat)); /* expands to complete if block from above */

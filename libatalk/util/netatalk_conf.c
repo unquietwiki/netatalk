@@ -131,12 +131,13 @@ static char *get_vol_uuid(const AFPObj *obj, const char *volname)
     int result;
     long offset;
 
-    fp = fopen(obj->options.uuidconf, "r+");
+    fp = malloc(fopen(obj->options.uuidconf, "r+"));
     if (fp != NULL) {
         /* Lock the file */
         result = flock(fileno(fp), LOCK_SH);
         if (result != 0) {
             LOG(log_error, logtype_afpd, "Can't lock UUID file %s", obj->options.uuidconf);
+            free(fp);
             return NULL;
         }
 
@@ -188,7 +189,7 @@ static char *get_vol_uuid(const AFPObj *obj, const char *volname)
                 }
                 LOG(log_debug, logtype_afpd, "get_uuid('%s'): UUID: '%s'", volname, uuid);
                 fclose(fp);
-                return strdup(uuid);
+                return __strdup(uuid);
             }
         }
     }
@@ -249,7 +250,7 @@ static char *get_vol_uuid(const AFPObj *obj, const char *volname)
     fprintf(fp, "\"%s\"\t%36s\n", volname, cp);
     fclose(fp);
 
-    return strdup(cp);
+    return __strdup(cp);
 }
 
 /*
@@ -509,7 +510,7 @@ static int accessvol(const AFPObj *obj, const char *args, const char *name)
     if (!args)
         EC_EXIT_STATUS(-1);
 
-    EC_NULL_LOG( names = strdup(args) );
+    EC_NULL_LOG( names = __strdup(args) );
 
     if ((p = strtok_quote(names, ", ")) == NULL) /* nothing, return okay */
         EC_EXIT_STATUS(-1);
@@ -605,7 +606,7 @@ static const char *getoption(const dictionary *conf, const char *vol, const char
 
     if ((!(result = atalk_iniparser_getstring(conf, vol, opt, NULL))) && (defsec != NULL))
         result = atalk_iniparser_getstring(conf, defsec, opt, NULL);
-    
+
     if (result == NULL)
         result = defval;
     return result;
@@ -628,7 +629,7 @@ static int getoption_bool(const dictionary *conf, const char *vol, const char *o
 
     if (((result = atalk_iniparser_getboolean(conf, vol, opt, -1)) == -1) && (defsec != NULL))
         result = atalk_iniparser_getboolean(conf, defsec, opt, -1);
-    
+
     if (result == -1)
         result = defval;
     return result;
@@ -711,8 +712,8 @@ static struct vol *creatvol(AFPObj *obj,
     /* Once volumes are loaded, we never change options again, we just delete em when they're removed from afp.conf */
 
     for (struct vol *vol = Volumes; vol; vol = vol->v_next) {
-        if (STRCMP(name, ==, vol->v_localname) && vol->v_deleted) {
-            /* 
+        if ((strcmp(name, vol->v_localname) == 0) && vol->v_deleted) {
+            /*
              * reloading config, volume still present, nothing else to do,
              * we don't change options for volumes once they're loaded
              */
@@ -720,7 +721,7 @@ static struct vol *creatvol(AFPObj *obj,
             volume = vol;
             EC_EXIT_STATUS(0);
         }
-        if (STRCMP(path, ==, vol->v_path)) {
+        if (strcmp(path, vol->v_path) == 0) {
             LOG(log_note, logtype_afpd, "volume \"%s\" path \"%s\" is the same as volumes \"%s\" path",
                 name, path, vol->v_configname);
             EC_EXIT_STATUS(0);
@@ -750,36 +751,36 @@ static struct vol *creatvol(AFPObj *obj,
 
     EC_NULL( volume = calloc(1, sizeof(struct vol)) );
 
-    EC_NULL( volume->v_configname = strdup(section));
+    EC_NULL( volume->v_configname = __strdup(section));
 
     volume->v_vfs_ea = AFPVOL_EA_AUTO;
     volume->v_umask = obj->options.umask;
 
     if ((val = getoption(obj->iniconfig, section, "password", preset, NULL)))
-        EC_NULL( volume->v_password = strdup(val) );
+        EC_NULL( volume->v_password = __strdup(val) );
 
     if ((val = getoption(obj->iniconfig, section, "veto files", preset, NULL)))
-        EC_NULL( volume->v_veto = strdup(val) );
+        EC_NULL( volume->v_veto = __strdup(val) );
 
     /* vol charset is in [G] and [V] */
     if ((val = getoption(obj->iniconfig, section, "vol charset", preset, NULL))) {
         if (strcasecmp(val, "UTF-8") == 0) {
-            val = strdup("UTF8");
+            val = __strdup("UTF8");
         }
-        EC_NULL( volume->v_volcodepage = strdup(val) );
+        EC_NULL( volume->v_volcodepage = __strdup(val) );
     }
     else
-        EC_NULL( volume->v_volcodepage = strdup(obj->options.volcodepage) );
+        EC_NULL( volume->v_volcodepage = __strdup(obj->options.volcodepage) );
 
     /* mac charset is in [G] and [V] */
     if ((val = getoption(obj->iniconfig, section, "mac charset", preset, NULL))) {
         if (strncasecmp(val, "MAC", 3) != 0) {
             LOG(log_warning, logtype_afpd, "Is '%s' really mac charset? ", val);
         }
-        EC_NULL( volume->v_maccodepage = strdup(val) );
+        EC_NULL( volume->v_maccodepage = __strdup(val) );
     }
     else
-    EC_NULL( volume->v_maccodepage = strdup(obj->options.maccodepage) );
+    EC_NULL( volume->v_maccodepage = __strdup(obj->options.maccodepage) );
 
     vlen = strlen(name);
     strlcpy(tmpname, name, sizeof(tmpname));
@@ -788,7 +789,7 @@ static struct vol *creatvol(AFPObj *obj,
 
 
     if (atalk_iniparser_getboolean(obj->iniconfig, INISEC_GLOBAL, "vol dbnest", 0)) {
-        EC_NULL( volume->v_dbpath = strdup(path) );
+        EC_NULL( volume->v_dbpath = __strdup(path) );
     } else {
         char *global_path;
         val = getoption(obj->iniconfig, section, "vol dbpath", preset, NULL);
@@ -819,9 +820,9 @@ static struct vol *creatvol(AFPObj *obj,
     }
 
     if ((val = getoption(obj->iniconfig, section, "cnid scheme", preset, NULL)))
-        EC_NULL( volume->v_cnidscheme = strdup(val) );
+        EC_NULL( volume->v_cnidscheme = __strdup(val) );
     else
-        volume->v_cnidscheme = strdup(DEFAULT_CNID_SCHEME);
+        volume->v_cnidscheme = __strdup(DEFAULT_CNID_SCHEME);
 
     if ((val = getoption(obj->iniconfig, section, "umask", preset, NULL)))
         volume->v_umask = (int)strtol(val, NULL, 8);
@@ -857,18 +858,18 @@ static struct vol *creatvol(AFPObj *obj,
     }
 
     if ((val = getoption(obj->iniconfig, section, "cnid server", preset, NULL))) {
-        EC_NULL( p = strdup(val) );
+        EC_NULL( p = __strdup(val) );
         volume->v_cnidserver = p;
         if ((q = strrchr(val, ':'))) {
             *q++ = 0;
-            volume->v_cnidport = strdup(q);
+            volume->v_cnidport = __strdup(q);
         } else {
-            volume->v_cnidport = strdup("4700");
+            volume->v_cnidport = __strdup("4700");
         }
 
     } else {
-        volume->v_cnidserver = strdup(obj->options.Cnid_srv);
-        volume->v_cnidport = strdup(obj->options.Cnid_port);
+        volume->v_cnidserver = __strdup(obj->options.Cnid_srv);
+        volume->v_cnidport = __strdup(obj->options.Cnid_port);
     }
 
     if ((val = getoption(obj->iniconfig, section, "ea", preset, NULL))) {
@@ -1087,11 +1088,11 @@ static struct vol *creatvol(AFPObj *obj,
 
     LOG(log_maxdebug, logtype_afpd, "creatvol: Volume '%s' ->  Longname: '%s'", name, tmpname);
 
-    EC_NULL( volume->v_localname = strdup(name) );
+    EC_NULL( volume->v_localname = __strdup(name) );
     EC_NULL( volume->v_u8mname = strdup_w(u8mtmpname) );
     EC_NULL( volume->v_macname = strdup_w(mactmpname) );
-    EC_NULL( volume->v_path = strdup(path) ); 
-        
+    EC_NULL( volume->v_path = __strdup(path) );
+
     volume->v_name = utf8_encoding(obj) ? volume->v_u8mname : volume->v_macname;
 
 #ifdef __svr4__
@@ -1199,7 +1200,7 @@ static int volfile_changed(AFPObj *obj)
 
 static int vol_section(const char *sec)
 {
-    if (STRCMP(sec, ==, INISEC_GLOBAL))
+    if (strcmp(sec, INISEC_GLOBAL) == 0)
         return 0;
     return 1;
 }
@@ -1224,7 +1225,7 @@ static int readvolfile(AFPObj *obj, const struct passwd *pwent)
 
     LOG(log_debug, logtype_afpd, "readvolfile: BEGIN");
 
-    int secnum = atalk_iniparser_getnsec(obj->iniconfig);    
+    int secnum = atalk_iniparser_getnsec(obj->iniconfig);
     LOG(log_debug, logtype_afpd, "readvolfile: sections: %d", secnum);
     const char *secname;
 
@@ -1232,18 +1233,18 @@ static int readvolfile(AFPObj *obj, const struct passwd *pwent)
         LOG(log_debug, logtype_afpd, "readvolfile: default_preset: %s", default_preset);
     }
 
-    for (i = 0; i < secnum; i++) { 
+    for (i = 0; i < secnum; i++) {
         secname = atalk_iniparser_getsecname(obj->iniconfig, i);
 
         if (!vol_section(secname))
             continue;
-        if (STRCMP(secname, ==, INISEC_HOMES)) {
+        if (strcmp(secname, INISEC_HOMES) == 0) {
             have_uservol = 1;
             if (!IS_AFP_SESSION(obj)
                 || strcmp(obj->username, obj->options.guest) == 0)
                 /* not an AFP session, but cnid daemon, dbd or ad util, or guest login */
                 continue;
-            if (pwent->pw_dir == NULL || STRCMP("", ==, pwent->pw_dir)) {
+            if (pwent->pw_dir == NULL || (strcmp("", pwent->pw_dir) == 0)) {
                 LOG(log_debug, logtype_afpd, "readvolfile: pwent->pw_dir: NULL or \"\" - no user home");
                 continue;
             }
@@ -1290,7 +1291,7 @@ static int readvolfile(AFPObj *obj, const struct passwd *pwent)
             continue;
 
         /* do variable substitution for volume name */
-        if (STRCMP(secname, ==, INISEC_HOMES)) {
+        if (strcmp(secname, INISEC_HOMES) == 0) {
             p = atalk_iniparser_getstring(obj->iniconfig, INISEC_HOMES, "home name", "$u's home");
             if (strstr(p, "$u") == NULL) {
                 LOG(log_warning, logtype_afpd, "home name must contain $u.");
@@ -1325,6 +1326,8 @@ static int              Extmap_cnt;
 
 static int setextmap(char *ext, char *type, char *creator)
 {
+    /* FIXME: cppcheck is confused by the EC_NULL_LOG behavior.
+        (error) Common realloc mistake: 'Extmap' nulled but not freed upon failure [memleakOnRealloc] */
     EC_INIT;
     struct extmap *em;
     int           cnt;
@@ -1336,14 +1339,16 @@ static int setextmap(char *ext, char *type, char *creator)
     ext++;
 
     for (em = Extmap, cnt = 0; em->em_ext; em++, cnt++)
-        if ((strdiacasecmp(em->em_ext, ext)) == 0)
+        if ((strdiacasecmp(em->em_ext, ext)) == 0){
+            free(Extmap);
             goto EC_CLEANUP;
+        }
 
     EC_NULL_LOG( Extmap = realloc(Extmap, sizeof(struct extmap) * (cnt + 2)) );
     (Extmap + cnt + 1)->em_ext = NULL;
     em = Extmap + cnt;
 
-    EC_NULL( em->em_ext = strdup(ext) );
+    EC_NULL( em->em_ext = __strdup(ext) );
 
     if ( *type == '\0' ) {
         memcpy(em->em_type, "\0\0\0\0", sizeof( em->em_type ));
@@ -1732,15 +1737,15 @@ struct vol *getvolbyvid(const uint16_t vid )
 
 /*
  * get username by path
- * 
+ *
  * getvolbypath() assumes that the user home directory has the same name as the username.
  * If that is not true, getuserbypath() is called and tries to retrieve the username
  * from the directory owner, checking its validity.
- * 
+ *
  * @param   path (r) absolute volume path
  * @returns NULL     if no match is found, pointer to username if successfull
  *
- */ 
+ */
 static char *getuserbypath(const char *path)
 {
     EC_INIT;
@@ -1755,19 +1760,19 @@ static char *getuserbypath(const char *path)
         EC_FAIL;
 
     /* get uid of dir owner */
-    if ((pwd = getpwuid(sbuf.st_uid)) == NULL)
+    if (!(pwd = getpwuid(sbuf.st_uid)))
         EC_FAIL;
 
     /* does user home directory exists? */
-    if (stat(pwd->pw_dir, &sbuf) != 0)
+    if (!stat(pwd->pw_dir, &sbuf))
         EC_FAIL;
 
     /* resolve and remove symlinks */
-    if ((hdir = realpath_safe(pwd->pw_dir)) == NULL) 
+    if (!(hdir = realpath_safe(pwd->pw_dir)))
         EC_FAIL;
 
     /* handle subdirectories, path = */
-    if (strncmp(path, hdir, strlen(hdir)) != 0)
+    if (!strncmp(path, hdir, strlen(hdir)))
         EC_FAIL;
 
     LOG(log_debug, logtype_afpd, "getuserbypath: match user: %s, home: %s, realhome: %s",
@@ -1790,7 +1795,7 @@ EC_CLEANUP:
  * Both cnid_metad and dbd thus need a way to lookup and create struct vols
  * for user home by path. This is what this func does as well.
  *
- * (1) Search "normal" volume list 
+ * (1) Search "normal" volume list
  * (2) Check if theres a [Homes] section, load_volumes() remembers this for us
  * (3) If there is, match "path" with "basedir regex" to get the user home parent dir
  * (4) Built user home path by appending the basedir matched in (3) and appending the username
@@ -1864,13 +1869,13 @@ struct vol *getvolbypath(AFPObj *obj, const char *path)
 
     int secnum = atalk_iniparser_getnsec(obj->iniconfig);
 
-    for (int i = 0; i < secnum; i++) { 
+    for (int i = 0; i < secnum; i++) {
         secname = atalk_iniparser_getsecname(obj->iniconfig, i);
-        if (STRCMP(secname, ==, INISEC_HOMES))
+        if (strcmp(secname, INISEC_HOMES) == 0)
             break;
     }
 
-    if (STRCMP(secname, !=, INISEC_HOMES))
+    if (!strcmp(secname, INISEC_HOMES))
         EC_FAIL_LOG("getvolbypath(\"%s\"): no volume for path", path);
 
     /* (3) */
@@ -1903,7 +1908,7 @@ struct vol *getvolbypath(AFPObj *obj, const char *path)
     p = path + match[0].rm_eo - match[0].rm_so;
     while (*p == '/')
         p++;
-    EC_NULL_LOG( user = strdup(p) );
+    EC_NULL_LOG( user = __strdup(p) );
 
     if ((prw = strchr(user, '/')))
         *prw++ = 0;
@@ -1916,7 +1921,7 @@ struct vol *getvolbypath(AFPObj *obj, const char *path)
         char *tuser;
         if ((tuser = getuserbypath(tmpbuf)) != NULL) {
             free(user);
-            user = strdup(tuser);
+            user = __strdup(tuser);
         }
         if ((pw = getpwnam(user)) == NULL)
             EC_FAIL_LOG("unknown user: %s", user);
@@ -2001,11 +2006,11 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
         set_processname(processname);
 
     AFPObj->afp_version = 11;
-    options->configfile  = AFPObj->cmdlineconfigfile ? strdup(AFPObj->cmdlineconfigfile) : strdup(_PATH_CONFDIR "afp.conf");
-    options->sigconffile = strdup(_PATH_STATEDIR "afp_signature.conf");
-    options->uuidconf    = strdup(_PATH_STATEDIR "afp_voluuid.conf");
+    options->configfile  = AFPObj->cmdlineconfigfile ? __strdup(AFPObj->cmdlineconfigfile) : __strdup(_PATH_CONFDIR "afp.conf");
+    options->sigconffile = __strdup(_PATH_STATEDIR "afp_signature.conf");
+    options->uuidconf    = __strdup(_PATH_STATEDIR "afp_voluuid.conf");
     options->flags       = OPTION_UUID | AFPObj->cmdlineflags;
-    
+
     if ((config = atalk_iniparser_load(AFPObj->options.configfile)) == NULL)
         return -1;
     AFPObj->iniconfig = config;
@@ -2087,19 +2092,19 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
     options->sparql_limit   = atalk_iniparser_getint   (config, INISEC_GLOBAL, "sparql results limit", 0);
 
     p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "map acls", "rights");
-    if (STRCMP(p, ==, "rights"))
+    if (strcmp(p, "rights") == 0)
         options->flags |= OPTION_ACL2MACCESS;
-    else if (STRCMP(p, ==, "mode"))
+    else if (strcmp(p, "mode") == 0)
         options->flags |= OPTION_ACL2MODE | OPTION_ACL2MACCESS;
     else {
-        if (STRCMP(p, !=, "none")) {
+        if (!strcmp(p, "none")) {
             LOG(log_error, logtype_afpd, "bad ACL mapping option: %s, defaulting to 'rights'", p);
             options->flags |= OPTION_ACL2MACCESS;
         }
     }
 
     if ((p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "hostname", NULL))) {
-        EC_NULL_LOG( options->hostname = strdup(p) );
+        EC_NULL_LOG( options->hostname = __strdup(p) );
     } else {
         if (gethostname(val, sizeof(val)) < 0 ) {
             perror( "gethostname" );
@@ -2107,7 +2112,7 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
         }
         if ((q = strchr(val, '.')))
             *q = '\0';
-        options->hostname = strdup(val);
+        options->hostname = __strdup(val);
     }
 
     if ((p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "k5 keytab", NULL))) {
@@ -2138,15 +2143,16 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
          }
     }
 
+    /* FIXME: cppcheck isn't sure what's going on here with q; it's not obvious either */
     q = atalk_iniparser_getstrdup(config, INISEC_GLOBAL, "cnid server", "localhost:4700");
     r = strrchr(q, ':');
     if (r)
         *r = 0;
-    options->Cnid_srv = strdup(q);
+    options->Cnid_srv = __strdup(q);
     if (r)
-        options->Cnid_port = strdup(r + 1);
+        options->Cnid_port = __strdup(r + 1);
     else
-        options->Cnid_port = strdup("4700");
+        options->Cnid_port = __strdup("4700");
     LOG(log_debug, logtype_afpd, "CNID Server: %s:%s", options->Cnid_srv, options->Cnid_port);
     if (q)
         free(q);
@@ -2159,7 +2165,7 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
         if (gethostbyname(q)) {
             if (r)
                 *r = ':';
-            EC_NULL_LOG( options->fqdn = strdup(q) );
+            EC_NULL_LOG( options->fqdn = __strdup(q) );
         } else {
             LOG(log_error, logtype_afpd, "error parsing -fqdn, gethostbyname failed for: %s", q);
         }
@@ -2170,7 +2176,7 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
 
     /* unix charset is in [G] only */
     if (!(p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "unix charset", NULL))) {
-        options->unixcodepage = strdup("UTF8");
+        options->unixcodepage = __strdup("UTF8");
         set_charset_name(CH_UNIX, "UTF8");
     } else {
         if (strcasecmp(p, "LOCALE") == 0) {
@@ -2186,7 +2192,7 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
         if (strcasecmp(p, "UTF-8") == 0) {
             p = "UTF8";
         }
-        options->unixcodepage = strdup(p);
+        options->unixcodepage = __strdup(p);
         set_charset_name(CH_UNIX, p);
     }
     options->unixcharset = CH_UNIX;
@@ -2194,24 +2200,24 @@ int afp_config_parse(AFPObj *AFPObj, char *processname)
 
     /* vol charset is in [G] and [V] */
     if (!(p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "vol charset", NULL))) {
-        options->volcodepage = strdup(options->unixcodepage);
+        options->volcodepage = __strdup(options->unixcodepage);
     } else {
         if (strcasecmp(p, "UTF-8") == 0) {
             p = "UTF8";
         }
-        options->volcodepage = strdup(p);
+        options->volcodepage = __strdup(p);
     }
     LOG(log_debug, logtype_afpd, "Global vol charset is %s", options->volcodepage);
-    
+
     /* mac charset is in [G] and [V] */
     if (!(p = atalk_iniparser_getstring(config, INISEC_GLOBAL, "mac charset", NULL))) {
-        options->maccodepage = strdup("MAC_ROMAN");
+        options->maccodepage = __strdup("MAC_ROMAN");
         set_charset_name(CH_MAC, "MAC_ROMAN");
     } else {
         if (strncasecmp(p, "MAC", 3) != 0) {
             LOG(log_warning, logtype_afpd, "Is '%s' really mac charset? ", p);
         }
-        options->maccodepage = strdup(p);
+        options->maccodepage = __strdup(p);
         set_charset_name(CH_MAC, p);
     }
     options->maccharset = CH_MAC;

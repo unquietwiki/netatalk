@@ -358,7 +358,7 @@ ucs2_t *strndup_w(const ucs2_t *src, size_t len)
 }
 
 /*******************************************************************
-wide strdup()
+wide __strdup()
 duplicate string
 ********************************************************************/
 /* no problem of surrogate pair */

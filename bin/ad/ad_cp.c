@@ -96,7 +96,7 @@ static int badcp, rval;
 static int ftw_options = FTW_MOUNT | FTW_PHYS | FTW_ACTIONRETVAL;
 
 /* Forward declarations */
-static int copy(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf);
+static int copy(const char *path, const struct stat *statp, int tflag, struct FTW *ftw);
 static int ftw_copy_file(const struct FTW *, const char *, const struct stat *, int);
 static int ftw_copy_link(const struct FTW *, const char *, const struct stat *, int);
 static int setfile(const struct stat *, int);

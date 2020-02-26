@@ -264,19 +264,19 @@ int ad_set(int argc, char **argv, AFPObj *obj)
     while ((c = getopt(argc, argv, ":l:t:c:f:a:")) != -1) {
         switch(c) {
         case 'l':
-            new_label = strdup(optarg);
+            new_label = __strdup(optarg);
             break;
         case 't':
-            new_type = strdup(optarg);
+            new_type = __strdup(optarg);
             break;
         case 'c':
-            new_creator = strdup(optarg);
+            new_creator = __strdup(optarg);
             break;
         case 'f':
-            new_flags = strdup(optarg);
+            new_flags = __strdup(optarg);
             break;
         case 'a':
-            new_attributes = strdup(optarg);
+            new_attributes = __strdup(optarg);
             break;
         case ':':
         case '?':

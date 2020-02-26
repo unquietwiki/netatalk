@@ -5,10 +5,10 @@
  * All Rights Reserved.  See COPYING.
  */
 
-/* 
+/*
    cnid_dbd metadaemon to start up cnid_dbd upon request from afpd.
    Here is how it works:
-   
+
                        via TCP socket
    1.       afpd          ------->        cnid_metad
 
@@ -148,7 +148,7 @@ static struct server *test_usockfn(const char *path)
     int i;
 
     for (i = 0; i < maxvol; i++) {
-        if (srv[i].v_path && STRCMP(path, ==, srv[i].v_path))
+        if (srv[i].v_path && strcmp(path, srv[i].v_path) == 0)
             return &srv[i];
     }
 
@@ -196,7 +196,7 @@ static struct server *test_usockfn(const char *path)
         for (i = 0; i <= maxvol && i < MAXVOLS; i++) {
             if (srv[i].v_path == NULL) {
                 up = &srv[i];
-                if ((up->v_path = strdup(volpath)) == NULL)
+                if ((up->v_path = __strdup(volpath)) == NULL)
                     return -1;
                 up->tm = t;
                 up->count = 0;
@@ -236,7 +236,7 @@ static struct server *test_usockfn(const char *path)
        }
     }
 
-    /* 
+    /*
        Create socketpair for comm between parent and child.
        We use it to pass fds from connecting afpd processes to our
        cnid_dbd child via fd passing.
@@ -348,7 +348,7 @@ EC_CLEANUP:
 }
 
 /* ------------------ */
-static void catch_child(int sig _U_) 
+static void catch_child(int sig _U_)
 {
     sigchild = 1;
 }
@@ -478,7 +478,7 @@ int main(int argc, char *argv[])
             debug = 1;
             break;
         case 'F':
-            obj.cmdlineconfigfile = strdup(optarg);
+            obj.cmdlineconfigfile = __strdup(optarg);
             break;
         case 'v':
         case 'V':

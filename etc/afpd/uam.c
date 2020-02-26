@@ -137,7 +137,7 @@ int uam_register(const int type, const char *path, const char *name, ...)
         return -1;
 
     uam->uam_name = name;
-    uam->uam_path = strdup(path);
+    uam->uam_path = __strdup(path);
     uam->uam_count++;
 
     va_start(ap, name);

@@ -1,29 +1,29 @@
-/* 
+/*
    Unix SMB/CIFS implementation.
    Samba system utilities
    Copyright (C) Andrew Tridgell 1992-1998
    Copyright (C) Jeremy Allison  1998-2005
    Copyright (C) Timur Bakeyev        2005
    Copyright (C) Bjoern Jacke    2006-2007
-   
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-   
+
    sys_copyxattr modified from LGPL2.1 libattr copyright
    Copyright (C) 2001-2002 Silicon Graphics, Inc.  All Rights Reserved.
    Copyright (C) 2001 Andreas Gruenbacher.
-      
+
    Samba 3.0.28, modified for netatalk.
 */
 
@@ -96,18 +96,12 @@ int sys_getxattrfd(int fd, const char *uname, int oflag, ...)
     int eafd;
     va_list args;
     mode_t mode = 0;
-
     if (oflag & O_CREAT) {
         va_start(args, oflag);
         mode = va_arg(args, mode_t);
         va_end(args);
+        eafd = solaris_openat(fd, uname, oflag | O_XATTR, mode);
     }
-
-    if (oflag & O_CREAT)
-        eafd = solaris_openat(fd, uname, oflag | O_XATTR, mode);
-    else
-        eafd = solaris_openat(fd, uname, oflag | O_XATTR, mode);
-
     return eafd;
 #else
     errno = ENOSYS;
@@ -153,7 +147,7 @@ ssize_t sys_getxattr (const char *path, const char *uname, void *value, size_t s
 	int retval, flags = 0;
 	int valuelength = (int)size;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) flags |= ATTR_ROOT;
 
 	retval = attr_get(path, attrname, (char *)value, &valuelength, flags);
@@ -189,7 +183,7 @@ ssize_t sys_fgetxattr (int filedes, const char *uname, void *value, size_t size)
 #elif defined(HAVE_EXTATTR_GET_FD)
     char *s;
     ssize_t retval;
-    int attrnamespace = (strncmp(name, "system", 6) == 0) ? 
+    int attrnamespace = (strncmp(name, "system", 6) == 0) ?
         EXTATTR_NAMESPACE_SYSTEM : EXTATTR_NAMESPACE_USER;
     const char *attrname = ((s=strchr(name, '.')) == NULL) ? name : s + 1;
 
@@ -265,7 +259,7 @@ ssize_t sys_lgetxattr (const char *path, const char *uname, void *value, size_t 
 	int retval, flags = ATTR_DONTFOLLOW;
 	int valuelength = (int)size;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) flags |= ATTR_ROOT;
 
 	retval = attr_get(path, attrname, (char *)value, &valuelength, flags);
@@ -293,7 +287,7 @@ static struct {
         int space;
 	const char *name;
 	size_t len;
-} 
+}
 extattr[] = {
 	{ EXTATTR_NAMESPACE_SYSTEM, EXTATTR_PREFIX("") },
         { EXTATTR_NAMESPACE_USER, EXTATTR_PREFIX("") },
@@ -444,7 +438,7 @@ static ssize_t remove_user(ssize_t ret, char *list, size_t size)
 	char *ptr;
 	char *ptr1;
 	ssize_t ptrsize;
-	
+
 	if (ret <= 0 || size == 0)
 		return ret;
 	ptrsize = ret;
@@ -587,7 +581,7 @@ int sys_removexattr (const char *path, const char *uname)
 #elif defined(HAVE_ATTR_REMOVE)
 	int flags = 0;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) flags |= ATTR_ROOT;
 
 	return attr_remove(path, attrname, flags);
@@ -622,7 +616,7 @@ int sys_fremovexattr (int filedes, const char *path, const char *uname)
 #elif defined(HAVE_ATTR_REMOVE)
 	int flags = 0;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) flags |= ATTR_ROOT;
 
 	return attr_remove(path, attrname, flags);
@@ -655,7 +649,7 @@ int sys_lremovexattr (const char *path, const char *uname)
 #elif defined(HAVE_ATTR_REMOVE)
 	int flags = ATTR_DONTFOLLOW;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) flags |= ATTR_ROOT;
 
 	return attr_remove(path, attrname, flags);
@@ -711,7 +705,7 @@ int sys_setxattr (const char *path, const char *uname, const void *value, size_t
 #elif defined(HAVE_ATTR_SET)
 	int myflags = 0;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) myflags |= ATTR_ROOT;
 	if (flags & XATTR_CREATE) myflags |= ATTR_CREATE;
 	if (flags & XATTR_REPLACE) myflags |= ATTR_REPLACE;
@@ -751,7 +745,7 @@ int sys_fsetxattr (int filedes, const char *uname, const void *value, size_t siz
 #elif defined(HAVE_EXTATTR_SET_FD)
     char *s;
     int retval = 0;
-    int attrnamespace = (strncmp(name, "system", 6) == 0) ? 
+    int attrnamespace = (strncmp(name, "system", 6) == 0) ?
         EXTATTR_NAMESPACE_SYSTEM : EXTATTR_NAMESPACE_USER;
     const char *attrname = ((s=strchr(name, '.')) == NULL) ? name : s + 1;
     if (flags) {
@@ -838,7 +832,7 @@ int sys_lsetxattr (const char *path, const char *uname, const void *value, size_
 #elif defined(HAVE_ATTR_SET)
 	int myflags = ATTR_DONTFOLLOW;
 	char *attrname = strchr(name,'.') + 1;
-	
+
 	if (strncmp(name, "system", 6) == 0) myflags |= ATTR_ROOT;
 	if (flags & XATTR_CREATE) myflags |= ATTR_CREATE;
 	if (flags & XATTR_REPLACE) myflags |= ATTR_REPLACE;
@@ -969,7 +963,7 @@ static int solaris_attropen(const char *path, const char *attrpath, int oflag, m
             EC_FAIL;
         }
 	}
-    
+
 EC_CLEANUP:
     if (filedes != -1)
         close(filedes);

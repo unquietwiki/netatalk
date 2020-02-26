@@ -299,7 +299,7 @@ static void send_fce_event(const AFPObj *obj, int event, const char *path, const
         first_event = false;
 
         struct passwd *pwd = getpwuid(obj->uid);
-        user = strdup(pwd->pw_name);
+        user = __strdup(pwd->pw_name);
 
         switch (obj->fce_version) {
         case 1:
@@ -432,8 +432,8 @@ static int add_udp_socket(const char *target_ip, const char *target_port )
         return AFPERR_PARAM;
     }
 
-    udp_socket_list[udp_sockets].addr = strdup(target_ip);
-    udp_socket_list[udp_sockets].port = strdup(target_port);
+    udp_socket_list[udp_sockets].addr = __strdup(target_ip);
+    udp_socket_list[udp_sockets].port = __strdup(target_port);
     udp_socket_list[udp_sockets].sock = -1;
     memset(&udp_socket_list[udp_sockets].addrinfo, 0, sizeof(struct addrinfo));
     memset(&udp_socket_list[udp_sockets].sockaddr, 0, sizeof(struct sockaddr_storage));
@@ -464,7 +464,7 @@ static void save_close_event(const AFPObj *obj, const char *path)
 static void fce_init_ign_names(const char *ignores)
 {
     int count = 0;
-    char *names = strdup(ignores);
+    char *names = __strdup(ignores);
     char *p;
     int i = 0;
 
@@ -480,7 +480,7 @@ static void fce_init_ign_names(const char *ignores)
     skip_files = calloc(count + 1, sizeof(char *));
 
     for (i = 0, p = strtok(names, "/"); p ; p = strtok(NULL, "/"))
-        skip_files[i++] = strdup(p);
+        skip_files[i++] = __strdup(p);
 
     free(names);
 }
@@ -596,7 +596,7 @@ int fce_set_events(const char *events)
     if (events == NULL)
         return AFPERR_PARAM;
 
-    e = strdup(events);
+    e = __strdup(events);
 
     fce_ev_enabled = 0;
 

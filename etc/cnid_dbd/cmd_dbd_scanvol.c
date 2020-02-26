@@ -179,7 +179,7 @@ static int check_adfile(const char *fname, const struct stat *st, const char **n
         }
         return 0;
     }
-    
+
     if (S_ISDIR(st->st_mode))
         adflags |= ADFLAGS_DIR;
 
@@ -229,7 +229,7 @@ static int check_adfile(const char *fname, const struct stat *st, const char **n
     return 0;
 }
 
-/* 
+/*
    Remove all files with file::EA* from adouble dir
 */
 static void remove_eafiles(const char *name, struct ea *ea)
@@ -274,7 +274,7 @@ exit:
         dbd_log(LOGSTD, "Couldn't chdir to '%s': %s", cwdbuf, strerror(errno));
         /* we can't proceed */
         longjmp(jmp, 1); /* this jumps back to cmd_dbd_scanvol() */
-    }    
+    }
 }
 
 /*
@@ -298,7 +298,7 @@ static int check_eafiles(const char *fname)
     }
 
     /* Check all EAs */
-    while (count < ea.ea_count) {        
+    while (count < ea.ea_count) {
         dbd_log(LOGDEBUG, "EA: %s", (*ea.ea_entries)[count].ea_name);
         remove = 0;
 
@@ -418,7 +418,7 @@ static int check_eafile_in_adouble(const char *name)
     /* Check if this is an AFPVOL_EA_AD vol */
     if (vol->v_vfs_ea == AFPVOL_EA_AD) {
         /* Does the filename contain "::EA" ? */
-        namedup = strdup(name);
+        namedup = __strdup(name);
         if ((namep = strstr(namedup, "::EA")) == NULL) {
             ret = 0;
             goto ea_check_done;
@@ -495,7 +495,7 @@ static int read_addir(void)
             continue;
 
         /* Skip ".Parent" */
-        if (STRCMP(ep->d_name, ==, ".Parent"))
+        if (strcmp(ep->d_name, ".Parent") == 0)
             continue;
 
         if ((lstat(ep->d_name, &st)) < 0) {
@@ -570,7 +570,7 @@ static cnid_t check_cnid(const char *name, cnid_t did, struct stat *st, int adfi
     if (ADFILE_OK) {
         ad_init(&ad, vol);
         if (ad_open(&ad, name, adflags | ADFLAGS_RDWR) != 0) {
-            
+
             if (vol->v_adouble != AD_VERSION_EA) {
                 dbd_log( LOGSTD, "Error opening AppleDouble file for '%s/%s': %s", cwdbuf, name, strerror(errno));
                 return CNID_INVALID;
@@ -686,7 +686,7 @@ static int dbd_readdir(int volroot, cnid_t did)
         }
 
         /* Skip .AppleDouble dir in this loop */
-        if (STRCMP(ep->d_name, == , ADv2_DIRNAME))
+        if (strcmp(ep->d_name, ADv2_DIRNAME) == 0)
             continue;
 
         if (!vol->vfs->vfs_validupath(vol, ep->d_name)) {
@@ -699,7 +699,7 @@ static int dbd_readdir(int volroot, cnid_t did)
                      cwdbuf, ep->d_name, strerror(errno));
             continue;
         }
-        
+
         switch (st.st_mode & S_IFMT) {
         case S_IFREG:
         case S_IFDIR:
@@ -726,7 +726,7 @@ static int dbd_readdir(int volroot, cnid_t did)
 
         statcount++;
         if ((statcount % 10000) == 0) {
-            if (dbd_flags & DBD_FLAGS_STATS)            
+            if (dbd_flags & DBD_FLAGS_STATS)
                 dbd_log(LOGSTD, "Scanned: %10llu, time: %10llu s",
                         statcount, (unsigned long long)(time(NULL) - t));
         }

@@ -344,13 +344,13 @@ DBD *dbif_init(const char *envhome, const char *filename)
         if (! envhome)
             return NULL;
 
-        dbd->db_envhome = strdup(envhome);
+        dbd->db_envhome = __strdup(envhome);
         if (NULL == dbd->db_envhome) {
             free(dbd);
             return NULL;
         }
 
-        dbd->db_filename = strdup(filename);
+        dbd->db_filename = __strdup(filename);
         if (NULL == dbd->db_filename) {
             free(dbd->db_envhome);
             free(dbd);

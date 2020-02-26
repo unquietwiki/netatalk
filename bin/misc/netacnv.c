@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     while ((opt = getopt(argc, argv, "m:o:f:t:")) != -1) {
         switch(opt) {
         case 'm':
-            macName = strdup(optarg);
+            macName = __strdup(optarg);
             break;
         case 'o':
             for (int i = 0; i < sizeof(flag_map)/sizeof(struct flag_map) - 1; i++)
@@ -53,10 +53,10 @@ int main(int argc, char **argv)
                     flags |= flag_map[i].flag;
             break;
         case 'f':
-            f = strdup(optarg);
+            f = __strdup(optarg);
             break;
         case 't':
-            t = strdup(optarg);
+            t = __strdup(optarg);
             break;
         }
     }

@@ -205,7 +205,7 @@ static int megatron( char *path, int module, char *newname, int flags)
 	printf("creator:            '%4s'\n", buf);
 	memcpy(&buf, &fh.finder_info.fdType, sizeof(u_int32_t));
 	printf("type:               '%4s'\n", buf);
-        for(i=0; i < NUMFORKS; ++i) 
+        for(i=0; i < NUMFORKS; ++i)
 	  printf("fork length[%d]:     %u\n", i, ntohl(fh.forklen[i]));
 	t = AD_DATE_TO_UNIX(fh.create_date);
         printf("creation date:      %s", ctime(&t));
@@ -215,7 +215,7 @@ static int megatron( char *path, int module, char *newname, int flags)
         printf("backup date:        %s", ctime(&t));
 	return( from_close( module ));
     }
-    
+
 /*
  * Open the target file and write out the file header info.
  * set the header to the new filename if it has been supplied.
@@ -246,8 +246,8 @@ static int megatron( char *path, int module, char *newname, int flags)
 	    forkred += bufc;
 	}
 #if DEBUG
-	fprintf( stderr, "megatron: forkred is \t\t%d\n", forkred );
-	fprintf( stderr, "megatron: fh.forklen[%d] is \t%d\n", fork, 
+	fprintf( stderr, "megatron: forkred is \t\t%zu\n", forkred );
+	fprintf( stderr, "megatron: fh.forklen[%d] is \t%u\n", fork,
 		ntohl( fh.forklen[ fork ] ));
 #endif /* DEBUG */
 	if (( bufc < 0 ) || ( forkred != ntohl( fh.forklen[ fork ] ))) {
@@ -326,11 +326,11 @@ int main(int argc, char **argv)
 	if (strcmp(argv[c], "--euc") == 0) {
 	  flags |= OPTION_EUCJP;
 	  continue;
-	}  
+	}
 	if (strcmp(argv[c], "--sjis") == 0) {
 	  flags |= OPTION_SJIS;
 	  continue;
-	}  
+	}
 	rc = megatron( argv[ c ], module, newname, flags);
 	if ( rc != 0 ) {
 	    rv = rc;

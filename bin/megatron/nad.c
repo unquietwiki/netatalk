@@ -102,8 +102,8 @@ static void euc2sjis( int *p1, int *p2) /* agrees w/ Samba on valid codes */
     c2 = *p2 & 0x7F;
 
     /* now convert ISO-2022 to Shift-JIS */
-    row_offset = c1 < 95 ? 112 : 176;
-    cell_offset = c1 % 2 ? (c2 > 95 ? 32 : 31) : 126;
+    row_offset = (c1 < 95) ? 112 : 176;
+    cell_offset = (c1 % 2) ? (c2 > 95 ? 32 : 31) : 126;
 
     *p1 = ((c1 + 1) >> 1) + row_offset;
     *p2 = c2 + cell_offset;
@@ -332,7 +332,7 @@ static char *utompathiconv(char *upath)
         goto utompath_error;
     }
 
-    if (flags & CONV_REQMANGLE) 
+    if (flags & CONV_REQMANGLE)
 	goto utompath_error;
 
     return(m);
@@ -381,7 +381,7 @@ static char *mtoupathiconv(char *mpath)
 }
 
 
- 
+
 char * (*_mtoupath) ( char *mpath) = mtoupathcap;
 char * (*_utompath) ( char *upath) = utompathcap;
 
@@ -432,7 +432,7 @@ int nad_open( char *path, int openflags, struct FHeader *fh, int options)
     int			fork;
 
 /*
- * Depending upon openflags, set up nad.adpath for the open.  If it 
+ * Depending upon openflags, set up nad.adpath for the open.  If it
  * is for write, then stat the current directory to get its mode.
  * Open the file.  Either fill or grab the adouble information.
  */
@@ -442,7 +442,7 @@ int nad_open( char *path, int openflags, struct FHeader *fh, int options)
     if ( openflags == O_RDONLY ) {
     	initvol(path);
 	strcpy( nad.adpath[0], path );
-	strcpy( nad.adpath[1], 
+	strcpy( nad.adpath[1],
 		nad.ad.ad_ops->ad_path( nad.adpath[0], ADFLAGS_HF ));
 	for ( fork = 0 ; fork < NUMFORKS ; fork++ ) {
 	    if ( stat( nad.adpath[ fork ], &st ) < 0 ) {
@@ -470,7 +470,7 @@ int nad_open( char *path, int openflags, struct FHeader *fh, int options)
 	initvol (".");
 	strcpy( nad.macname, fh->name );
 	strcpy( nad.adpath[0], mtoupath( nad.macname ));
-	strcpy( nad.adpath[1], 
+	strcpy( nad.adpath[1],
 		nad.ad.ad_ops->ad_path( nad.adpath[0], ADFLAGS_HF ));
 #if DEBUG
     fprintf(stderr, "%s\n", nad.macname);
@@ -498,7 +498,7 @@ int nad_header_read(struct FHeader *fh)
     char 		*p;
 
 #if 0
-    memcpy( nad.macname, ad_entry( &nad.ad, ADEID_NAME ), 
+    memcpy( nad.macname, ad_entry( &nad.ad, ADEID_NAME ),
 	    ad_getentrylen( &nad.ad, ADEID_NAME ));
     nad.macname[ ad_getentrylen( &nad.ad, ADEID_NAME ) ] = '\0';
     strcpy( fh->name, nad.macname );
@@ -509,9 +509,9 @@ int nad_header_read(struct FHeader *fh)
       if ( NULL == (p = strrchr(nad.adpath[DATA], '/')) )
         p = nad.adpath[DATA];
       else p++;
-#if 0      
+#if 0
       strcpy(fh->name, utompath(nad.adpath[DATA]));
-#endif      
+#endif
       strcpy(fh->name, utompath(p));
     }
 
@@ -524,11 +524,11 @@ int nad_header_read(struct FHeader *fh)
     fh->comment[0] = '\0';
 
 #if DEBUG
-    fprintf( stderr, "macname of file\t\t\t%.*s\n", strlen( fh->name ), 
+    fprintf( stderr, "macname of file\t\t\t%.*s\n", strlen( fh->name ),
 	    fh->name );
-    fprintf( stderr, "size of data fork\t\t%d\n", 
+    fprintf( stderr, "size of data fork\t\t%u\n",
 	    ntohl( fh->forklen[ DATA ] ));
-    fprintf( stderr, "size of resource fork\t\t%d\n", 
+    fprintf( stderr, "size of resource fork\t\t%u\n",
 	    ntohl( fh->forklen[ RESOURCE ] ));
     fprintf( stderr, "get info comment\t\t\"%s\"\n", fh->comment );
 #endif /* DEBUG */
@@ -550,7 +550,7 @@ int nad_header_read(struct FHeader *fh)
     memcpy( &temptime, &fh->backup_date, sizeof( temptime ));
     temptime = AD_DATE_TO_UNIX(temptime);
     fprintf( stderr, "backup_date seconds\t\t%lu\n", temptime );
-    fprintf( stderr, "size of finder_info\t\t%d\n", sizeof( fh->finder_info ));
+    fprintf( stderr, "size of finder_info\t\t%zu\n", sizeof( fh->finder_info ));
 #endif /* DEBUG */
 
     memcpy(&fh->finder_info.fdType,
@@ -578,16 +578,16 @@ int nad_header_read(struct FHeader *fh)
 #if DEBUG
     {
 	short		flags;
-	fprintf( stderr, "finder_info.fdType\t\t%.*s\n", 
+	fprintf( stderr, "finder_info.fdType\t\t%.*s\n",
 		sizeof( fh->finder_info.fdType ), &fh->finder_info.fdType );
-	fprintf( stderr, "finder_info.fdCreator\t\t%.*s\n", 
+	fprintf( stderr, "finder_info.fdCreator\t\t%.*s\n",
 		sizeof( fh->finder_info.fdCreator ),
 		&fh->finder_info.fdCreator );
-	fprintf( stderr, "nad type and creator\t\t%.*s\n\n", 
-		sizeof( fh->finder_info.fdType ) + 
-		sizeof( fh->finder_info.fdCreator ), 
+	fprintf( stderr, "nad type and creator\t\t%.*s\n\n",
+		sizeof( fh->finder_info.fdType ) +
+		sizeof( fh->finder_info.fdCreator ),
 		ad_entry( &nad.ad, ADEID_FINDERI ));
-	memcpy(&flags, ad_entry( &nad.ad, ADEID_FINDERI ) + 
+	memcpy(&flags, ad_entry( &nad.ad, ADEID_FINDERI ) +
 	       FINDERIOFF_FLAGS, sizeof( flags ));
 	fprintf( stderr, "nad.ad flags\t\t\t%x\n", flags );
 	fprintf( stderr, "fh flags\t\t\t%x\n", fh->finder_info.fdFlags );
@@ -607,23 +607,23 @@ int nad_header_write(struct FHeader *fh)
     u_int32_t		temptime;
 
     ad_setentrylen( &nad.ad, ADEID_NAME, strlen( nad.macname ));
-    memcpy( ad_entry( &nad.ad, ADEID_NAME ), nad.macname, 
+    memcpy( ad_entry( &nad.ad, ADEID_NAME ), nad.macname,
 	    ad_getentrylen( &nad.ad, ADEID_NAME ));
     ad_setentrylen( &nad.ad, ADEID_COMMENT, strlen( fh->comment ));
-    memcpy( ad_entry( &nad.ad, ADEID_COMMENT ), fh->comment, 
+    memcpy( ad_entry( &nad.ad, ADEID_COMMENT ), fh->comment,
 	    ad_getentrylen( &nad.ad, ADEID_COMMENT ));
     ad_setentrylen( &nad.ad, ADEID_RFORK, ntohl( fh->forklen[ RESOURCE ] ));
 
 #if DEBUG
     fprintf( stderr, "ad_getentrylen\n" );
-    fprintf( stderr, "ADEID_FINDERI\t\t\t%d\n", 
+    fprintf( stderr, "ADEID_FINDERI\t\t\t%d\n",
 	    ad_getentrylen( &nad.ad, ADEID_FINDERI ));
-    fprintf( stderr, "ADEID_RFORK\t\t\t%d\n", 
+    fprintf( stderr, "ADEID_RFORK\t\t\t%d\n",
 	    ad_getentrylen( &nad.ad, ADEID_RFORK ));
     fprintf( stderr, "ADEID_NAME\t\t\t%d\n",
 	    ad_getentrylen( &nad.ad, ADEID_NAME ));
     fprintf( stderr, "ad_entry of ADEID_NAME\t\t%.*s\n",
-	    ad_getentrylen( &nad.ad, ADEID_NAME ), 
+	    ad_getentrylen( &nad.ad, ADEID_NAME ),
 	    ad_entry( &nad.ad, ADEID_NAME ));
     fprintf( stderr, "ADEID_COMMENT\t\t\t%d\n",
 	     ad_getentrylen( &nad.ad, ADEID_COMMENT ));
@@ -644,7 +644,7 @@ int nad_header_write(struct FHeader *fh)
 #endif /* DEBUG */
 
     memset( ad_entry( &nad.ad, ADEID_FINDERI ), 0, ADEDLEN_FINDERI );
-    memcpy( ad_entry( &nad.ad, ADEID_FINDERI ) + FINDERIOFF_TYPE, 
+    memcpy( ad_entry( &nad.ad, ADEID_FINDERI ) + FINDERIOFF_TYPE,
 	    &fh->finder_info.fdType, sizeof( fh->finder_info.fdType ));
     memcpy( ad_entry( &nad.ad, ADEID_FINDERI ) + FINDERIOFF_CREATOR,
 	   &fh->finder_info.fdCreator, sizeof( fh->finder_info.fdCreator ));
@@ -668,8 +668,8 @@ int nad_header_write(struct FHeader *fh)
 	fprintf( stderr, "nad.ad flags\t\t\t%x\n", flags );
 	fprintf( stderr, "fh flags\t\t\t%x\n", fh->finder_info.fdFlags );
 	fprintf( stderr, "fh xflags\t\t\t%x\n", fh->finder_xinfo.fdXFlags );
-	fprintf( stderr, "type and creator\t\t%.*s\n\n", 
-		sizeof( fh->finder_info.fdType ) + 
+	fprintf( stderr, "type and creator\t\t%.*s\n\n",
+		sizeof( fh->finder_info.fdType ) +
 		sizeof( fh->finder_info.fdCreator ),
 		ad_entry( &nad.ad, ADEID_FINDERI ));
     }
@@ -696,7 +696,7 @@ ssize_t nad_read(int fork, char *forkbuf, size_t bufc)
     fprintf( stderr, "Entering nad_read\n" );
 #endif /* DEBUG */
 
-    if (( cc = ad_read( &nad.ad, forkeid[ fork ], nad.offset[ fork ], 
+    if (( cc = ad_read( &nad.ad, forkeid[ fork ], nad.offset[ fork ],
 	    forkbuf, bufc)) < 0 )  {
 	perror( "Reading the appledouble file:" );
 	return( cc );
@@ -728,7 +728,7 @@ ssize_t nad_write(int fork, char *forkbuf, size_t bufc)
     buf_ptr = forkbuf;
 
     while (( writelen > 0 ) && ( cc >= 0 )) {
-	cc =  ad_write( &nad.ad, forkeid[ fork ], nad.offset[ fork ], 
+	cc =  ad_write( &nad.ad, forkeid[ fork ], nad.offset[ fork ],
 		0, buf_ptr, writelen);
 	nad.offset[ fork ] += cc;
 	buf_ptr += cc;

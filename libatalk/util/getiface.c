@@ -40,7 +40,7 @@ static int addname(char **list, int *i, const char *name)
     /* if we've run out of room, allocate some more. just return
      * the present list if we can't. */
      
-    if ((list[*i] = strdup(name)) == NULL)
+    if ((list[*i] = __strdup(name)) == NULL)
       return -1;
 
     (*i)++;

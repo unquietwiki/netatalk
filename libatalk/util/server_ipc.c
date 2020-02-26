@@ -139,7 +139,7 @@ static int ipc_set_volumes(struct ipc_header *ipc, server_child_t *children)
         child->afpch_volumes = NULL;
     }
     if (ipc->len)
-        child->afpch_volumes = strdup(ipc->msg);
+        child->afpch_volumes = __strdup(ipc->msg);
 
 EC_CLEANUP:
     pthread_mutex_unlock(&children->servch_lock);

@@ -59,7 +59,7 @@ int acl_ldap_readconfig(dictionary *iniconfig)
                     *((int *)(ldap_prefs[i].pref)) = atoi(val);
                 else
                     /* store string as string */
-                    *((const char **)(ldap_prefs[i].pref)) = strdup(val);
+                    *((const char **)(ldap_prefs[i].pref)) = __strdup(val);
             } else {
                 /* ok, we have string to int mapping for this pref
                    eg. "none", "simple", "sasl" map to 0, 128, 129 */

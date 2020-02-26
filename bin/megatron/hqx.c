@@ -81,7 +81,7 @@ static u_char	*hqx7_first;
 static u_char	*hqx7_last;
 static int	first_flag;
 
-/* 
+/*
 hqx_open must be called first.  pass it a filename that is supposed
 to contain a binhqx file.  an hqx struct will be allocated and
 somewhat initialized; hqx_fd is set.  skip_junk is called from
@@ -144,9 +144,9 @@ int hqx_open(char *hqxfile, int flags, struct FHeader *fh, int options)
     }
 }
 
-/* 
+/*
  * hqx_close must be called before a second file can be opened using
- * hqx_open.  Upon successful completion, a value of 0 is returned.  
+ * hqx_open.  Upon successful completion, a value of 0 is returned.
  * Otherwise, a value of -1 is returned.
  */
 
@@ -203,7 +203,7 @@ ssize_t hqx_read(int fork, char *buffer, size_t length)
 	    if ( storedcrc == hqx.forkcrc[ fork ] ) {
 		return( 0 );
 	    }
-	    fprintf( stderr, "hqx_read: Bad %s fork crc, dude\n", 
+	    fprintf( stderr, "hqx_read: Bad %s fork crc, dude\n",
 		    forkname[ fork ] );
 	}
 	return( -1 );
@@ -220,7 +220,7 @@ ssize_t hqx_read(int fork, char *buffer, size_t length)
 
     cc = hqx_7tobin( buffer, readlen );
     if ( cc > 0 ) {
-	hqx.forkcrc[ fork ] = 
+	hqx.forkcrc[ fork ] =
 		updcrc( hqx.forkcrc[ fork ], (u_char *)buffer, cc );
 	hqx.forklen[ fork ] -= cc;
     }
@@ -230,7 +230,7 @@ ssize_t hqx_read(int fork, char *buffer, size_t length)
     return( cc );
 }
 
-/* 
+/*
  * hqx_header_read is called by hqx_open, and before any information can
  * read from the hqx_header substruct.  it must be called before any
  * of the bytes of the other two forks can be read, as well.
@@ -258,14 +258,14 @@ int hqx_header_read(struct FHeader *fh)
 	fprintf( stderr, "Premature end of file :" );
 	return( -2 );
     }
-    hqx.headercrc = updcrc( hqx.headercrc, (u_char *)&namelen, 
+    hqx.headercrc = updcrc( hqx.headercrc, (u_char *)&namelen,
 	    sizeof( namelen ));
 
 #if HEXOUTPUT
     write( headerfork, &namelen, sizeof( namelen ));
 #endif /* HEXOUTPUT */
 
-    if (( headerbuf = 
+    if (( headerbuf =
 	    (char *)malloc( (unsigned int)( namelen + BHH_HEADSIZ ))) == NULL ) {
 	return( -1 );
     }
@@ -275,7 +275,7 @@ int hqx_header_read(struct FHeader *fh)
 	return( -2 );
     }
     headerptr = headerbuf;
-    hqx.headercrc = updcrc( hqx.headercrc, 
+    hqx.headercrc = updcrc( hqx.headercrc,
 	    (u_char *)headerbuf, ( namelen + BHH_HEADSIZ - BHH_CRCSIZ ));
 
 #if HEXOUTPUT
@@ -322,8 +322,8 @@ int hqx_header_read(struct FHeader *fh)
 	fprintf( stderr, "get info comment\t%s\n", fh->comment );
 	fprintf( stderr, "type\t\t\t%.*s\n", sizeof( fh->finder_info.fdType ),
 		&fh->finder_info.fdType );
-	fprintf( stderr, "creator\t\t\t%.*s\n", 
-		sizeof( fh->finder_info.fdCreator ), 
+	fprintf( stderr, "creator\t\t\t%.*s\n",
+		sizeof( fh->finder_info.fdCreator ),
 		&fh->finder_info.fdCreator );
 	memcpy( &flags, &fh->finder_info.fdFlags, sizeof( flags ));
 	flags = ntohs( flags );
@@ -341,9 +341,9 @@ int hqx_header_read(struct FHeader *fh)
  */
 
     time_seconds = AD_DATE_FROM_UNIX(time( NULL ));
-    memcpy( &fh->create_date, &time_seconds, 
+    memcpy( &fh->create_date, &time_seconds,
 	    sizeof( fh->create_date ));
-    memcpy( &fh->mod_date, &time_seconds, 
+    memcpy( &fh->mod_date, &time_seconds,
 	    sizeof( fh->mod_date ));
     fh->backup_date = AD_DATE_START;
 
@@ -352,7 +352,7 @@ int hqx_header_read(struct FHeader *fh)
  */
 
     fh->comment[0] = '\0';
-    memset( &fh->finder_info.fdLocation, 0, 
+    memset( &fh->finder_info.fdLocation, 0,
 	    sizeof( fh->finder_info.fdLocation ));
     memset( &fh->finder_info.fdFldr, 0, sizeof( fh->finder_info.fdFldr ));
 
@@ -403,7 +403,7 @@ ssize_t hqx7_fill(u_char *hqx7_ptr)
 /*
 char tr[] = "!\"#$%&'()*+,-012345689@ABCDEFGHIJKLMNPQRSTUVXYZ[`abcdefhijklmpqr";
 	     0 123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-	     0                1               2               3 
+	     0                1               2               3
 Input characters are translated to a number between 0 and 63 by direct
 array lookup.  0xFF signals a bad character.  0xFE is signals a legal
 character that should be skipped, namely '\n', '\r'.  0xFD signals ':'.
@@ -449,7 +449,7 @@ static const u_char hqxlookup[] = {
  * skip_junk is called from hqx_open.  it skips over junk in the file until
  * it comes to a line containing a valid first line of binhqx encoded file.
  * returns a 0 for success, negative if it never finds good data.
- * pass a FIRST when looking for the first valid binhex line, a value of 
+ * pass a FIRST when looking for the first valid binhex line, a value of
  * OTHER when looking for any subsequent line.
  */
 
@@ -474,7 +474,7 @@ int skip_junk(int line)
 		nc = c = 0;
 		stopflag = NOWAY;
 		hqx7_first++;
-		while (( stopflag == NOWAY ) && 
+		while (( stopflag == NOWAY ) &&
 			( nc < ( hqx7_last - hqx7_first ))) {
 		    switch ( c = hqxlookup[ hqx7_first[ nc ]] ) {
 			case 0xFC :
@@ -498,7 +498,7 @@ int skip_junk(int line)
 		nc = c = 0;
 		stopflag = NOWAY;
 		hqx7_first++;
-		while (( stopflag == NOWAY ) && 
+		while (( stopflag == NOWAY ) &&
 			( nc < ( hqx7_last - hqx7_first ))) {
 		    switch ( c = hqxlookup[ hqx7_first[ nc ]] ) {
 			case 0xFC :
@@ -544,7 +544,7 @@ int skip_junk(int line)
     return( 0 );
 }
 
-/* 
+/*
  * hqx_7tobin is used to read the data, converted to binary.  It is
  * called by hqx_header_read to get the header information, and must be
  * called to get the data for each fork, and the crc data for each
@@ -629,7 +629,7 @@ size_t hqx_7tobin( char *outbuf, size_t datalen)
 			break;
 		}
 	    }
-	    
+
 	    if ( hqx7i == 4 ) {
 		hqx8[ 0 ] = (( hqx7[ 0 ] << 2 ) | ( hqx7[ 1 ] >> 4 ));
 		hqx8[ 1 ] = (( hqx7[ 1 ] << 4 ) | ( hqx7[ 2 ] >> 2 ));

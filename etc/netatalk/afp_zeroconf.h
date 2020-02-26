@@ -25,7 +25,7 @@
 /*
  * registers service with a particular Zerconf implemenation.
  */
-void zeroconf_register(const AFPObj *obj);
+void zeroconf_register(const AFPObj *configs);
 
 /*
  * de-registers the ntpd service with a particular Zerconf implemenation.

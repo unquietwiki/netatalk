@@ -5,7 +5,7 @@
 
 /* FP functions */
 /* messages.c */
-int	afp_getsrvrmesg (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
+int afp_getsrvrmesg (AFPObj *obj, char *ibuf, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
 
 /* afs.c */
 #ifdef AFS

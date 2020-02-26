@@ -5,14 +5,14 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
- 
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
  */
 
-#ifndef DIRCACHE_H 
+#ifndef DIRCACHE_H
 #define DIRCACHE_H
 
 #include <sys/types.h>
@@ -32,9 +32,9 @@
 
 extern int        dircache_init(int reqsize);
 extern int        dircache_add(const struct vol *, struct dir *);
-extern void       dircache_remove(const struct vol *, struct dir *, int flag);
-extern struct dir *dircache_search_by_did(const struct vol *vol, cnid_t did);
-extern struct dir *dircache_search_by_name(const struct vol *, const struct dir *dir, char *name, int len);
+extern void       dircache_remove(const struct vol *vol _U_, struct dir *dir, int flags);
+extern struct dir *dircache_search_by_did(const struct vol *vol, cnid_t cnid);
+extern struct dir *dircache_search_by_name(const struct vol *vol, const struct dir *dir, char *name, int len);
 extern void       dircache_dump(void);
 extern void       log_dircache_stat(void);
 #endif /* DIRCACHE_H */

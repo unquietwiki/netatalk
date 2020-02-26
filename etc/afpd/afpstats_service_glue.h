@@ -62,18 +62,18 @@ extern void dbus_glib_marshal_afpstats_obj_BOOLEAN__POINTER_POINTER (GClosure   
                                                                      const GValue *param_values,
                                                                      gpointer      invocation_hint,
                                                                      gpointer      marshal_data);
-void
-dbus_glib_marshal_afpstats_obj_BOOLEAN__POINTER_POINTER (GClosure     *closure,
-                                                         GValue       *return_value G_GNUC_UNUSED,
-                                                         guint         n_param_values,
-                                                         const GValue *param_values,
-                                                         gpointer      invocation_hint G_GNUC_UNUSED,
-                                                         gpointer      marshal_data)
+
+void dbus_glib_marshal_afpstats_obj_BOOLEAN__POINTER_POINTER (GClosure      *closure,
+                                                              GValue        G_GNUC_UNUSED *return_value,
+                                                              guint         n_param_values,
+                                                              const GValue  *param_values,
+                                                              gpointer      G_GNUC_UNUSED invocation_hint,
+                                                              gpointer      marshal_data)
 {
-  typedef gboolean (*GMarshalFunc_BOOLEAN__POINTER_POINTER) (gpointer     data1,
-                                                             gpointer     arg_1,
-                                                             gpointer     arg_2,
-                                                             gpointer     data2);
+  typedef gboolean (*GMarshalFunc_BOOLEAN__POINTER_POINTER) (gpointer data1,
+                                                             gpointer arg_1,
+                                                             gpointer arg_2,
+                                                             gpointer data2);
   register GMarshalFunc_BOOLEAN__POINTER_POINTER callback;
   register GCClosure *cc = (GCClosure*) closure;
   register gpointer data1, data2;

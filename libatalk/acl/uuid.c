@@ -258,7 +258,7 @@ int getnamefromuuid(const uuidp_t uuidp, char **name, uuidtype_t *type) {
             add_cachebyuuid(uuidp, "UUID_ENOENT", UUID_ENOENT, 0);
             ret = -1;
         } else {
-            *name = strdup(pwd->pw_name);
+            *name = __strdup(pwd->pw_name);
             add_cachebyuuid(uuidp, *name, *type, 0);
             ret = 0;
         }
@@ -275,7 +275,7 @@ int getnamefromuuid(const uuidp_t uuidp, char **name, uuidtype_t *type) {
             add_cachebyuuid(uuidp, "UUID_ENOENT", UUID_ENOENT, 0);
             ret = -1;
         } else {
-            *name = strdup(grp->gr_name);
+            *name = __strdup(grp->gr_name);
             add_cachebyuuid(uuidp, *name, *type, 0);
             ret = 0;
         }

@@ -242,7 +242,7 @@ static int sl_pack_CNID(sl_cnids_t *cnids, char *buf, int offset, char *toc_buf,
             offset += 8;
         }
     }
-    
+
 EC_CLEANUP:
     if (ret != 0)
         return -1;
@@ -357,37 +357,40 @@ static int sl_pack_loop(DALLOC_CTX *query, char *buf, int offset, char *toc_buf,
 
         type = talloc_get_name(query->dd_talloc_array[n]);
 
-        if (STRCMP(type, ==, "sl_array_t")) {
+        if(strcmp(type,"sl_array_t"))
             EC_NEG1( offset = sl_pack_array(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
-        } else if (STRCMP(type, ==, "sl_dict_t")) {
+        if(strcmp(type,"sl_dict_t"))
             EC_NEG1( offset = sl_pack_dict(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
-        } else if (STRCMP(type, ==, "sl_filemeta_t")) {
+        if(strcmp(type,"sl_filemeta_t"))
             EC_NEG1( offset = sl_pack_filemeta(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
-        } else if (STRCMP(type, ==, "uint64_t")) {
+        if(strcmp(type,"uint64_t")) {
             uint64_t i;
             memcpy(&i, query->dd_talloc_array[n], sizeof(uint64_t));
             EC_NEG1( offset = sl_pack_uint64(i, buf, offset) );
-        } else if (STRCMP(type, ==, "char *")) {
+        }
+        if(strcmp(type,"char *"))
             EC_NEG1( offset = sl_pack_string(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
-        } else if (STRCMP(type, ==, "sl_bool_t")) {
+        if(strcmp(type,"sl_bool_t")) {
             sl_bool_t bl;
             memcpy(&bl, query->dd_talloc_array[n], sizeof(sl_bool_t));
             EC_NEG1( offset = sl_pack_bool(bl, buf, offset) );
-        } else if (STRCMP(type, ==, "double")) {
+        }
+        if(strcmp(type,"double")){
             double d;
             memcpy(&d, query->dd_talloc_array[n], sizeof(double));
             EC_NEG1( offset = sl_pack_float(d, buf, offset) );
-        } else if (STRCMP(type, ==, "sl_nil_t")) {
+        }
+        if(strcmp(type,"sl_nil_t"))
             EC_NEG1( offset = sl_pack_nil(buf, offset) );
-        } else if (STRCMP(type, ==, "sl_time_t")) {
+        if(strcmp(type,"sl_time_t")){
             sl_time_t t;
             memcpy(&t, query->dd_talloc_array[n], sizeof(sl_time_t));
             EC_NEG1( offset = sl_pack_date(t, buf, offset) );
-        } else if (STRCMP(type, ==, "sl_uuid_t")) {
-            EC_NEG1( offset = sl_pack_uuid(query->dd_talloc_array[n], buf, offset) );
-        } else if (STRCMP(type, ==, "sl_cnids_t")) {
-            EC_NEG1( offset = sl_pack_CNID(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
         }
+        if(strcmp(type,"sl_uuid_t"))
+            EC_NEG1( offset = sl_pack_uuid(query->dd_talloc_array[n], buf, offset) );
+        if(strcmp(type,"sl_cnids_t"))
+            EC_NEG1( offset = sl_pack_CNID(query->dd_talloc_array[n], buf, offset, toc_buf, toc_idx) );
     }
 
 EC_CLEANUP:
@@ -520,7 +523,7 @@ static int sl_unpack_CNID(DALLOC_CTX *query, const char *buf, int offset, int le
     if (length <= 16)
         /* that's permitted, it's an empty array */
         goto EC_CLEANUP;
-    
+
     query_data64 = sl_unpack_uint64(buf, offset, encoding);
     count = query_data64 & 0xffff;
 
@@ -667,7 +670,7 @@ static int sl_unpack_cpx(DALLOC_CTX *query,
     default:
         EC_FAIL;
     }
-            
+
 EC_CLEANUP:
     if (ret != 0)
         roffset = -1;

@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     while ((c = getopt(argc, argv, "h:")) != -1) {
         switch(c) {
         case 'h':
-            host = strdup(optarg);
+            host = __strdup(optarg);
             break;
         }
     }

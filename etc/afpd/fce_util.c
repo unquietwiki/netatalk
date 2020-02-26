@@ -173,7 +173,7 @@ int fce_set_coalesce(const char *opt)
     if (opt == NULL)
         return AFPERR_PARAM;
 
-    e = strdup(opt);
+    e = __strdup(opt);
 
     for (p = strtok(e, ","); p; p = strtok(NULL, ",")) {
         if (strcmp(p, "all") == 0) {

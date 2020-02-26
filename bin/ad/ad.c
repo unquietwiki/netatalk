@@ -1,11 +1,11 @@
-/* 
+/*
    Copyright (c) 2009 Frank Lahm <franklahm@gmail.com>
-   
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
- 
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -53,36 +53,20 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if (afp_config_parse(&obj, "ad") != 0)
-        return 1;
+    if (afp_config_parse(&obj, "ad") != 0) return 1;
 
     setuplog("default:note", "/dev/tty");
 
-    if (load_volumes(&obj, LV_DEFAULT) != 0)
-        return 1;
+    if (load_volumes(&obj, LV_DEFAULT) != 0) return 1;
+    if(strcmp(argv[1],"ls")) return ad_ls(argc - 1, argv + 1, &obj);
+    if(strcmp(argv[1],"cp")) return ad_cp(argc - 1, argv + 1, &obj);
+    if(strcmp(argv[1],"rm")) return ad_rm(argc - 1, argv + 1, &obj);
+    if(strcmp(argv[1],"mv")) return ad_mv(argc, argv, &obj);
+    if(strcmp(argv[1],"set")) return ad_set(argc - 1, argv + 1, &obj);
+    if(strcmp(argv[1],"find")) return ad_find(argc, argv, &obj);
 
-    if (STRCMP(argv[1], ==, "ls"))
-        return ad_ls(argc - 1, argv + 1, &obj);
-    else if (STRCMP(argv[1], ==, "cp"))
-        return ad_cp(argc - 1, argv + 1, &obj);
-    else if (STRCMP(argv[1], ==, "rm"))
-        return ad_rm(argc - 1, argv + 1, &obj);
-    else if (STRCMP(argv[1], ==, "mv"))
-        return ad_mv(argc, argv, &obj);
-    else if (STRCMP(argv[1], ==, "set"))
-        return ad_set(argc - 1, argv + 1, &obj);
-    else if (STRCMP(argv[1], ==, "find"))
-        return ad_find(argc, argv, &obj);
-    else if (STRCMP(argv[1], ==, "-v")) {
+    if(strcmp(argv[1],"-v") || strcmp(argv[1],"--version")) {
         show_version();
-        return 1;
-    }
-    else if  (STRCMP(argv[1], ==, "--version")) {
-        show_version();
-        return 1;
-    }
-    else {
-        usage_main();
         return 1;
     }
 

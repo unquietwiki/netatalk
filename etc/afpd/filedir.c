@@ -244,7 +244,7 @@ static int moveandrename(const AFPObj *obj,
     adflags = 0;
 
     if (!isdir) {
-        if ((oldunixname = strdup(mtoupath(vol, oldname, sdir->d_did, utf8_encoding(vol->v_obj)))) == NULL)
+        if ((oldunixname = __strdup(mtoupath(vol, oldname, sdir->d_did, utf8_encoding(vol->v_obj)))) == NULL)
             return AFPERR_PARAM; /* can't convert */
         AFP_CNID_START("cnid_get");
         id = cnid_get(vol->v_cdb, sdir->d_did, oldunixname, strlen(oldunixname));
@@ -253,7 +253,7 @@ static int moveandrename(const AFPObj *obj,
 #ifndef HAVE_ATFUNCS
         /* Need full path */
         free(oldunixname);
-        if ((oldunixname = strdup(ctoupath(vol, sdir, oldname))) == NULL)
+        if ((oldunixname = __strdup(ctoupath(vol, sdir, oldname))) == NULL)
             return AFPERR_PARAM; /* pathname too long */
 #endif /* HAVE_ATFUNCS */
 
@@ -272,7 +272,7 @@ static int moveandrename(const AFPObj *obj,
         }
     } else {
         id = sdir->d_did; /* we already have the CNID */
-        if ((oldunixname = strdup(ctoupath( vol, dirlookup(vol, sdir->d_pdid), oldname))) == NULL)
+        if ((oldunixname = __strdup(ctoupath( vol, dirlookup(vol, sdir->d_pdid), oldname))) == NULL)
             return AFPERR_PARAM;
         adflags = ADFLAGS_DIR;
     }

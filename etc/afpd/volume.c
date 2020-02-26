@@ -613,7 +613,7 @@ static int volume_codepage(AFPObj *obj, struct vol *volume)
     /* Codepages */
 
     if (!volume->v_volcodepage)
-        volume->v_volcodepage = strdup("UTF8");
+        volume->v_volcodepage = __strdup("UTF8");
 
     if ( (charset_t) -1 == ( volume->v_volcharset = add_charset(volume->v_volcodepage)) ) {
         LOG (log_error, logtype_afpd, "Setting codepage %s as volume codepage failed", volume->v_volcodepage);
@@ -625,7 +625,7 @@ static int volume_codepage(AFPObj *obj, struct vol *volume)
     }
 
     if (!volume->v_maccodepage)
-        volume->v_maccodepage = strdup(obj->options.maccodepage);
+        volume->v_maccodepage = __strdup(obj->options.maccodepage);
 
     if ( (charset_t) -1 == ( volume->v_maccharset = add_charset(volume->v_maccodepage)) ) {
         LOG (log_error, logtype_afpd, "Setting codepage %s as mac codepage failed", volume->v_maccodepage);

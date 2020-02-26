@@ -167,7 +167,7 @@ static int unpack_header(struct ea * restrict ea)
         memcpy(&uint32, buf, 4); /* EA size */
         buf += 4;
         (*(ea->ea_entries))[count].ea_size = ntohl(uint32);
-        (*(ea->ea_entries))[count].ea_name = strdup(buf);
+        (*(ea->ea_entries))[count].ea_name = __strdup(buf);
         if (! (*(ea->ea_entries))[count].ea_name) {
             LOG(log_error, logtype_afpd, "unpack_header: OOM");
             ret = -1;
@@ -345,7 +345,7 @@ static int ea_addentry(struct ea * restrict ea,
 
     /* We've grown the array, now store the entry */
     (*(ea->ea_entries))[ea->ea_count].ea_size = attrsize;
-    (*(ea->ea_entries))[ea->ea_count].ea_name = strdup(attruname);
+    (*(ea->ea_entries))[ea->ea_count].ea_name = __strdup(attruname);
     if ( ! (*(ea->ea_entries))[ea->ea_count].ea_name) {
         LOG(log_error, logtype_afpd, "ea_addentry: OOM");
         goto error;
@@ -684,7 +684,7 @@ int ea_open(const struct vol * restrict vol,
     if (!stat(uname, &st) && S_ISDIR(st.st_mode))
         ea->ea_flags |=  EA_DIR;
 
-    if ( ! (ea->filename = strdup(uname))) {
+    if ( ! (ea->filename = __strdup(uname))) {
         LOG(log_error, logtype_afpd, "ea_open: OOM");
         return -1;
     }

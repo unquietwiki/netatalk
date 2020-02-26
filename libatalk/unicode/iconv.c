@@ -267,8 +267,8 @@ atalk_iconv_t atalk_iconv_open(const char *tocode, const char *fromcode)
 	}
 	memset(ret, 0, sizeof(*ret));
 
-	ret->from_name = strdup(fromcode);
-	ret->to_name = strdup(tocode);
+	ret->from_name = __strdup(fromcode);
+	ret->to_name = __strdup(tocode);
 
 	/* check for the simplest null conversion */
 	if (strcasecmp(fromcode, tocode) == 0) {

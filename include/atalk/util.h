@@ -55,7 +55,6 @@
 #define MAX(a, b)  ((a) > (b) ? (a) : (b))
 #endif
 
-#define STRCMP(a,b,c) (strcmp(a,c) b 0)
 #define ZERO_STRUCT(a) memset(&(a), 0, sizeof(a))
 #define ZERO_STRUCTP(a) memset((a), 0, sizeof(a))
 #ifndef MAX

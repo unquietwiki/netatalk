@@ -57,7 +57,7 @@ static char           *netatalk_dirs[] = {
 };
 
 /* Forward declarations */
-static int rm(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf);
+static int rm(const char *path, const struct stat *statp, int tflag, struct FTW *ftw);
 
 /*
   Check for netatalk special folders e.g. ".AppleDB" or ".AppleDesktop"

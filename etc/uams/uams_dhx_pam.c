@@ -90,7 +90,7 @@ static int PAM_conv (int num_msg,
   int count = 0;
   struct pam_response *reply;
   
-#define COPY_STRING(s) (s) ? strdup(s) : NULL
+#define COPY_STRING(s) (s) ? __strdup(s) : NULL
   
   errno = 0;
 

@@ -53,8 +53,8 @@
 #define table hash_table
 #define chain hash_chain
 
-static hnode_t *hnode_alloc(void *context);
-static void hnode_free(hnode_t *node, void *context);
+static hnode_t *hnode_alloc(void *context _U_);
+static void hnode_free(hnode_t *node, void *context _U_);
 static hash_val_t hash_fun_default(const void *key);
 static int hash_comp_default(const void *key1, const void *key2);
 

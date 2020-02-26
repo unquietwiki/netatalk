@@ -328,20 +328,20 @@ static int RF_copyfile_adouble(VFS_FUNC_ARGS_COPYFILE)
         /* get basename */
 
         /* build src path to AppleDouble file*/
-        EC_NULL(dup1 = strdup(src));
+        EC_NULL(dup1 = __strdup(src));
         EC_NULL(name = basename(strdup(dup1)));
 
-        EC_NULL(dup2 = strdup(src));
+        EC_NULL(dup2 = __strdup(src));
         EC_NULL(dir = dirname(dup2));
         EC_NULL(s = bfromcstr(dir));
         EC_ZERO(bcatcstr(s, "/.AppleDouble/"));
         EC_ZERO(bcatcstr(s, name));
 
         /* build dst path to AppleDouble file*/
-        EC_NULL(dup4 = strdup(dst));
+        EC_NULL(dup4 = __strdup(dst));
         EC_NULL(name = basename(strdup(dup4)));
 
-        EC_NULL(dup3 = strdup(dst));
+        EC_NULL(dup3 = __strdup(dst));
         EC_NULL(dir = dirname(dup3));
         EC_NULL(d = bfromcstr(dir));
         EC_ZERO(bcatcstr(d, "/.AppleDouble/"));
@@ -569,20 +569,20 @@ static int RF_copyfile_ea(VFS_FUNC_ARGS_COPYFILE)
     /* get basename */
 
     /* build src path to ._ file*/
-    EC_NULL(dup1 = strdup(src));
+    EC_NULL(dup1 = __strdup(src));
     EC_NULL(name = basename(strdup(dup1)));
 
-    EC_NULL(dup2 = strdup(src));
+    EC_NULL(dup2 = __strdup(src));
     EC_NULL(dir = dirname(dup2));
     EC_NULL(s = bfromcstr(dir));
     EC_ZERO(bcatcstr(s, "/._"));
     EC_ZERO(bcatcstr(s, name));
 
     /* build dst path to ._file*/
-    EC_NULL(dup4 = strdup(dst));
+    EC_NULL(dup4 = __strdup(dst));
     EC_NULL(name = basename(strdup(dup4)));
 
-    EC_NULL(dup3 = strdup(dst));
+    EC_NULL(dup3 = __strdup(dst));
     EC_NULL(dir = dirname(dup3));
     EC_NULL(d = bfromcstr(dir));
     EC_ZERO(bcatcstr(d, "/._"));

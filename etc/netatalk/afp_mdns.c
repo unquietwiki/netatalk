@@ -63,6 +63,9 @@ int TXTRecordKeyPrintf(TXTRecordRef * rec, const char * key_fmt, int key_var, co
     char *key = NULL, *str = NULL;
     va_list ap;
 
+    /* FIXME: cppcheck warning
+        %u in format string (no. 1) requires 'unsigned int' but the argument type is 'signed int'. */
+
     if( 0 > asprintf(&key, key_fmt, key_var))
         return -1;
 

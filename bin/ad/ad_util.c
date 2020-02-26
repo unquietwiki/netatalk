@@ -110,7 +110,7 @@ int openvol(AFPObj *obj, const char *path, afpvol_t *vol)
     if ((vol->vol = getvolbypath(obj, path)) == NULL)
         return -1;
 
-    if (STRCMP(vol->vol->v_cnidscheme, != , "dbd"))
+    if (!strcmp(vol->vol->v_cnidscheme, "dbd"))
         ERROR("\"%s\" isn't a \"dbd\" CNID volume!", vol->vol->v_path);
 
     /* Sanity checks to ensure we can touch this volume */
@@ -132,7 +132,7 @@ int openvol(AFPObj *obj, const char *path, afpvol_t *vol)
     cnid_getstamp(vol->vol->v_cdb,
                   vol->db_stamp,
                   sizeof(vol->db_stamp));
-    
+
     return 0;
 }
 

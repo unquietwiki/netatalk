@@ -90,7 +90,7 @@ int set_charset_name(charset_t ch, const char *name)
 {
     if (ch >= NUM_CHARSETS)
         return -1;
-    charset_names[ch] = strdup(name);
+    charset_names[ch] = __strdup(name);
     return 0;
 }
 
@@ -163,7 +163,7 @@ charset_t add_charset(const char* name)
     }
 
     /* register the new charset_t name */
-    charset_names[cur_charset_t] = strdup(name);
+    charset_names[cur_charset_t] = __strdup(name);
 
     charsets[cur_charset_t] = get_charset_functions (cur_charset_t);
     max_charset_t++;

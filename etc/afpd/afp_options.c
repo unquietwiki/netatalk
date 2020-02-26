@@ -218,7 +218,7 @@ void afp_options_parse_cmdline(AFPObj *obj, int ac, char **av)
             obj->cmdlineflags |= OPTION_DEBUG;
             break;
         case 'F':
-            obj->cmdlineconfigfile = strdup(optarg);
+            obj->cmdlineconfigfile = __strdup(optarg);
             break;
         case 'v':	/* version */
             show_version( ); puts( "" );

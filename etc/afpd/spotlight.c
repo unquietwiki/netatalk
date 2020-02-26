@@ -1430,22 +1430,30 @@ int afp_spotlight_rpc(AFPObj *obj, char *ibuf, size_t ibuflen,
 
         EC_NULL_LOG( rpccmd = dalloc_get(query, "DALLOC_CTX", 0, "DALLOC_CTX", 0, "char *", 0) );
 
-        if (STRCMP(rpccmd, ==, "fetchPropertiesForContext:")) {
-            EC_ZERO_LOG( sl_rpc_fetchPropertiesForContext(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "openQueryWithParams:forContext:")) {
-            EC_ZERO_LOG( sl_rpc_openQuery(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "fetchQueryResultsForContext:")) {
-            EC_ZERO_LOG( sl_rpc_fetchQueryResultsForContext(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "storeAttributes:forOIDArray:context:")) {
-            EC_ZERO_LOG( sl_rpc_storeAttributesForOIDArray(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "fetchAttributeNamesForOIDArray:context:")) {
-            EC_ZERO_LOG( sl_rpc_fetchAttributeNamesForOIDArray(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "fetchAttributes:forOIDArray:context:")) {
-            EC_ZERO_LOG( sl_rpc_fetchAttributesForOIDArray(obj, query, reply, vol) );
-        } else if (STRCMP(rpccmd, ==, "closeQueryForContext:")) {
-            EC_ZERO_LOG( sl_rpc_closeQueryForContext(obj, query, reply, vol) );
-        } else {
-            LOG(log_error, logtype_sl, "afp_spotlight_rpc: unknown Spotlight RPC: %s", rpccmd);
+        switch(rpccmd){
+            case "fetchPropertiesForContext:":
+                EC_ZERO_LOG( sl_rpc_fetchPropertiesForContext(obj, query, reply, vol) );
+                break;
+            case "openQueryWithParams:forContext:":
+                EC_ZERO_LOG( sl_rpc_openQuery(obj, query, reply, vol) );
+                break;
+            case "fetchQueryResultsForContext:":
+                EC_ZERO_LOG( sl_rpc_fetchQueryResultsForContext(obj, query, reply, vol) );
+                break;
+            case "storeAttributes:forOIDArray:context:":
+                EC_ZERO_LOG( sl_rpc_storeAttributesForOIDArray(obj, query, reply, vol) );
+                break;
+            case "fetchAttributeNamesForOIDArray:context:":
+                EC_ZERO_LOG( sl_rpc_fetchAttributeNamesForOIDArray(obj, query, reply, vol) );
+                break;
+            case "fetchAttributes:forOIDArray:context:":
+                EC_ZERO_LOG( sl_rpc_fetchAttributesForOIDArray(obj, query, reply, vol) );
+                break;
+            case "closeQueryForContext:":
+                EC_ZERO_LOG( sl_rpc_closeQueryForContext(obj, query, reply, vol) );
+                break;
+            default:
+                LOG(log_error, logtype_sl, "afp_spotlight_rpc: unknown Spotlight RPC: %s", rpccmd);
         }
 
         LOG(log_debug, logtype_sl, "Spotlight RPC reply dump:\n%s",

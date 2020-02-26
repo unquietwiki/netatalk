@@ -625,7 +625,7 @@ struct dir *dirlookup(const struct vol *vol, cnid_t did)
         err = 1;
         goto exit;
     }
-    if ((upath = strdup(upath)) == NULL) { /* 3 */
+    if ((upath = __strdup(upath)) == NULL) { /* 3 */
         afp_errno = AFPERR_NOOBJ;
         err = 1;
         goto exit;

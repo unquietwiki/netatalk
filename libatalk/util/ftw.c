@@ -22,12 +22,6 @@
 #include "config.h"
 #endif
 
-#if __GNUC__
-# define alloca __builtin_alloca
-#else
-#  include <alloca.h>
-#endif
-
 #include <dirent.h>
 #define NAMLEN(dirent) strlen ((dirent)->d_name)
 #include <errno.h>
@@ -651,7 +645,7 @@ static int ftw_startup (const char *dir,
 
     data.maxdir = descriptors < 1 ? 1 : descriptors;
     data.actdir = 0;
-    data.dirstreams = (struct dir_data **) alloca (data.maxdir
+    data.dirstreams = (struct dir_data **) malloc (data.maxdir
                                                    * sizeof (struct dir_data *));
     memset (data.dirstreams, '\0', data.maxdir * sizeof (struct dir_data *));
 
@@ -809,6 +803,7 @@ out_fail:
     save_err = errno;
     mytdestroy (data.known_objects, free);
     free (data.dirbuf);
+    free (data.dirstreams);
     __set_errno (save_err);
 
     return result;

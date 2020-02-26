@@ -13,7 +13,7 @@
 #define AFPSTATUS_ICONOFF     6
 #define AFPSTATUS_FLAGOFF     8
 
-/* AFPSTATUS_PRELEN is the number of bytes for status data prior to 
+/* AFPSTATUS_PRELEN is the number of bytes for status data prior to
  * the ServerName field.
  *
  * This is two bytes of offset space for the MachineType, AFPVersionCount,
@@ -39,6 +39,6 @@ extern void status_init (AFPObj *, DSI *dsi);
 extern void set_signature(struct afp_options *);
 
 /* FP functions */
-int afp_getsrvrinfo (AFPObj *obj, char *ibuf, size_t ibuflen, char *rbuf,  size_t *rbuflen);
+int afp_getsrvrinfo(AFPObj *obj, char *ibuf _U_, size_t ibuflen _U_, char *rbuf, size_t *rbuflen);
 
 #endif

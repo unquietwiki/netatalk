@@ -408,7 +408,7 @@ int compare_ip(const struct sockaddr *sa1, const struct sockaddr *sa2)
     char *ip1;
     const char *ip2;
 
-    ip1 = strdup(getip_string(sa1));
+    ip1 = __strdup(getip_string(sa1));
     ip2 = getip_string(sa2);
 
     ret = strcmp(ip1, ip2);
@@ -444,7 +444,7 @@ int tokenize_ip_port(const char *ipurl, char **address, char **port)
     char *s;
 
     AFP_ASSERT(ipurl && address && port);
-    EC_NULL( p = strdup(ipurl));
+    EC_NULL( p = __strdup(ipurl));
 
     /* Either ipv4, ipv4:port, ipv6, [ipv6] or [ipv6]:port */
 
@@ -463,7 +463,7 @@ int tokenize_ip_port(const char *ipurl, char **address, char **port)
         *address = p;
         p = strchr(p, ':');
         *p = '\0';
-        EC_NULL( *port = strdup(p + 1));
+        EC_NULL( *port = __strdup(p + 1));
         p = NULL; /* prevent free() */
         EC_EXIT_STATUS(0);
     }
@@ -480,7 +480,7 @@ int tokenize_ip_port(const char *ipurl, char **address, char **port)
 
     /* [ipv6] or [ipv6]:port */
 
-    EC_NULL( *address = strdup(p + 1) );
+    EC_NULL( *address = __strdup(p + 1) );
 
     if ((s = strchr(*address, ']')) == NULL) {
         LOG(log_error, logtype_dsi, "tokenize_ip_port: malformed ipv6 address %s\n", ipurl);
@@ -491,7 +491,7 @@ int tokenize_ip_port(const char *ipurl, char **address, char **port)
 
     if (s[1] == ':') {
         /* [ipv6]:port */
-        EC_NULL( *port = strdup(s + 2) );
+        EC_NULL( *port = __strdup(s + 2) );
     } else {
         /* [ipv6] */
         *port = NULL;

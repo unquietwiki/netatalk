@@ -101,7 +101,7 @@ int of_rename(const struct vol *vol,
             && s_of->key.inode == of->key.inode ) {
             if (!done) {
                 free(of_name(of));
-                if ((of_name(of) = strdup(newpath)) == NULL)
+                if ((of_name(of) = __strdup(newpath)) == NULL)
                     return AFPERR_MISC;
                 done = 1;
             }
@@ -191,7 +191,7 @@ of_alloc(struct vol *vol,
         /* initialize to zero. This is important to ensure that
            ad_open really does reinitialize the structure. */
         ad_init(ad, vol);
-        if ((ad->ad_name = strdup(path)) == NULL) {
+        if ((ad->ad_name = __strdup(path)) == NULL) {
             LOG(log_error, logtype_afpd, "of_alloc: malloc: %s", strerror(errno) );
             free(ad);
             free(of);

@@ -106,16 +106,15 @@ static uid_t default_uid = -1;
 /* Forward declarations */
 static int ad_mkrf(const char *path);
 static int ad_header_read(const char *path, struct adouble *ad, const struct stat *hst);
-static int ad_header_upgrade(struct adouble *ad, const char *name);
+static int ad_header_upgrade(struct adouble *ad _U_, const char *name _U_);
 
 #ifdef HAVE_EAFD
-static int ad_mkrf_ea(const char *path);
+static int ad_mkrf_ea(const char *path _U_);
 #endif
-static int ad_header_read_ea(const char *path, struct adouble *ad, const struct stat *hst);
-static int ad_header_upgrade_ea(struct adouble *ad, const char *name);
+static int ad_header_read_ea(const char *path, struct adouble *ad, const struct stat *hst _U_);
+static int ad_header_upgrade_ea(struct adouble *ad _U_, const char *name _U_);
 off_t ad_reso_size(const char *path, int adflags, struct adouble *ad);
-static int ad_mkrf_osx(const char *path);
-
+static int ad_mkrf_osx(const char *path _U_);
 
 static struct adouble_fops ad_adouble = {
     &ad_path,
@@ -293,7 +292,7 @@ const char *openflags2logstr(int oflags)
         first = 0;
     }
     return buf;
-}    
+}
 
 static uint32_t get_eid(uint32_t eid)
 {
@@ -548,9 +547,7 @@ int ad_valid_header_osx(const char *path)
         EC_FAIL;
     }
 
-    if (strncmp(buf + ADEDOFF_FILLER,
-                AD_FILLER_NETATALK,
-                strlen(AD_FILLER_NETATALK)) != 0)
+    if (strncmp(buf + ADEDOFF_FILLER, AD_FILLER_NETATALK, strlen(AD_FILLER_NETATALK)) != 0)
         /*
          * It's a split fork created by OS X, it's not our "own" ._ file
          * and thus not a valid header in this context.
@@ -1277,7 +1274,7 @@ EC_CLEANUP:
         ad_data_fileno(ad), ad->ad_data_fork.adf_refcount,
         ad_meta_fileno(ad), ad->ad_mdp->adf_refcount,
         ad_reso_fileno(ad), ad->ad_rfp->adf_refcount);
-        
+
     EC_EXIT;
 }
 
@@ -1930,7 +1927,7 @@ int ad_metadata(const char *name, int flags, struct adouble *adp)
     int   ret, err, oflags;
 
     /* Sanitize flags */
-    oflags = (flags & (ADFLAGS_CHECK_OF | ADFLAGS_DIR)) | ADFLAGS_HF | ADFLAGS_RDONLY;    
+    oflags = (flags & (ADFLAGS_CHECK_OF | ADFLAGS_DIR)) | ADFLAGS_HF | ADFLAGS_RDONLY;
 
     if ((ret = ad_open(adp, name, oflags)) < 0 && errno == EACCES) {
         become_root();

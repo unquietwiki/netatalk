@@ -118,7 +118,7 @@ void configure_spotlight_attributes(const char *attributes_in)
      * enabled, otherwise disable it.
      */
 
-    attributes = strdup(attributes_in);
+    attributes = __strdup(attributes_in);
 
     for (attr = strtok(attributes, ","); attr; attr = strtok(NULL, ",")) {
 

@@ -52,7 +52,7 @@ static char *args[] = {"test", "-F", "test.conf"};
 
 int main(int argc, char **argv)
 {
-    int reti;
+    /* int reti; */
     uint16_t vid;
     struct vol *vol;
     struct dir *retdir;
@@ -89,11 +89,12 @@ int main(int argc, char **argv)
     TEST_int(getfiledirparms(&obj, vid, DIRDID_ROOT, ""), 0);
 
 #if 0
-// this doesn't work anymore since cnid sheme = last (which we use in the test)
-// has been changed to force read-only mode for the volume
+/* this doesn't work anymore since cnid sheme = last (which we use in the test)
+    has been changed to force read-only mode for the volume
+
     TEST_expr(reti = createdir(&obj, vid, DIRDID_ROOT, "dir1"),
               reti == 0 || reti == AFPERR_EXIST);
-
+*/
     TEST_int(getfiledirparms(&obj, vid, DIRDID_ROOT, "dir1"), 0);
 #endif
 /*

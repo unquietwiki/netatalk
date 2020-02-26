@@ -2,9 +2,9 @@
  *
  * updcrc(3), crc(1) - calculate crc polynomials
  *
- * Calculate, intelligently, the CRC of a dataset incrementally given a 
+ * Calculate, intelligently, the CRC of a dataset incrementally given a
  * buffer full at a time.
- * 
+ *
  * Usage:
  * 	newcrc = updcrc( oldcrc, bufadr, buflen )
  * 		unsigned int oldcrc, buflen;
@@ -93,7 +93,7 @@ updcrc(WTYPE icrc, unsigned char *icp, int icnt)
 #ifndef SWAPPED
 	crc = (crc<<B) ^ crctab[(crc>>(W-B)) ^ *cp++];
 #else /* SWAPPED */
-	crc = (crc>>B) ^ crctab[(crc & ((1<<B)-1)) ^ *cp++]; 
+	crc = (crc>>B) ^ crctab[(crc & ((1<<B)-1)) ^ *cp++];
 #endif /* SWAPPED */
     }
 
@@ -113,7 +113,7 @@ void initcrctab(void)
     register  int b, i;
     WTYPE v;
 
-    
+
     for( b = 0; b <= (1<<B)-1; ++b ) {
 #ifndef SWAPPED
 	for( v = b<<(W-B), i = B; --i >= 0; )
@@ -121,7 +121,7 @@ void initcrctab(void)
 #else
 	for( v = b, i = B; --i >= 0; )
 	    v = v & 1 ? (v>>1)^P : v>>1;
-#endif	    
+#endif
 	crctab[b] = v;
 
 	printf( "0x%lx,", v & ((1L<<W)-1L));
@@ -165,7 +165,7 @@ main( int ac, char **av)
     if( nr != 0 )
 	perror( "reading" );
     else {
-	printf( "%lx\n", crc );
+	printf( "%hx\n", crc );
     }
 
 #ifdef MAGICCHECK
@@ -181,7 +181,7 @@ main( int ac, char **av)
 
     /* crc should now equal magic */
     buf[0] = buf[1] = buf[2] = buf[3] = 0;
-    printf( "magic test: %lx =?= %lx\n", crc, updcrc(-1, buf, W/B));
+    printf( "magic test: %hx =?= %hx\n", crc, updcrc(-1, buf, W/B));
 #endif /* MAGICCHECK */
 }
 

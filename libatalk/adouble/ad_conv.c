@@ -237,7 +237,7 @@ static int ad_conv_dehex(const char *path, const struct stat *sp, const struct v
     
     become_root();
     if (adflags != ADFLAGS_DIR) {
-        if ((newadpath = strdup(vol->ad_path(bdata(newpath), 0))) == NULL) {
+        if ((newadpath = __strdup(vol->ad_path(bdata(newpath), 0))) == NULL) {
             unbecome_root();
             EC_FAIL;
         }

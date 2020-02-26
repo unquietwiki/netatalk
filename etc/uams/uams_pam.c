@@ -64,7 +64,7 @@ static int PAM_conv (int num_msg,
   struct pam_response *reply;
   int count;
   
-#define COPY_STRING(s) (s) ? strdup(s) : NULL
+#define COPY_STRING(s) (s) ? __strdup(s) : NULL
   
   if (num_msg < 1)
     return PAM_CONV_ERR;

@@ -442,7 +442,7 @@ int dsi_tcp_init(DSI *dsi, const char *hostname, const char *inaddress, const ch
 
     if (port == NULL)
         /* inport is supposed to always contain a valid port string */
-        EC_NULL( port = strdup(inport) );
+        EC_NULL( port = __strdup(inport) );
 
     /* Prepare hint for getaddrinfo */
     memset(&hints, 0, sizeof hints);
